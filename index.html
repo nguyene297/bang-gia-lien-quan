@@ -1,66 +1,80 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tính Sao & Giá Cày Rank Liên Quân</title>
-<style>
-  *,*::before,*::after{box-sizing:border-box}
-  :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--fg:#e5e7eb;--acc:#22c55e;--border:#1f2937;--warn:#f59e0b;}
-  html,body{height:100%}
-  body{
-    margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    background:linear-gradient(160deg,#0b1020,#111827 45%,#0b1020); color:var(--fg);
-    display:flex; align-items:center; justify-content:center; padding:16px; overflow-x:hidden;
-  }
-  .wrap{max-width:980px; width:100%;}
-  .card{background:rgba(17,24,39,.9); border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 15px 40px rgba(0,0,0,.35); backdrop-filter:blur(6px)}
-  h1{margin:0 0 8px 0; font-size:clamp(18px,3.6vw,28px)}
-  p.lead{margin:0 0 12px 0; color:var(--muted); font-size:14px; line-height:1.4}
-  .grid{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:12px}
-  .col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}
-  .pane{background:#0b1220; border:1px solid var(--border); border-radius:14px; padding:12px}
-  label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
-  select,input[type="number"]{width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:#0e1627; color:var(--fg); font-size:15px; outline:none; min-height:44px}
-  .controls{display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:8px}
-  .inline{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-  .btn{cursor:pointer; border:1px solid #2a3446; background:#0e1627; color:var(--fg); padding:12px 14px; border-radius:12px; font-weight:700; min-height:44px}
-  .btn.primary{background:var(--acc); border-color:#16a34a; color:#052e16}
-  .stat{background:linear-gradient(180deg,#0a1426,#0c1220); border:1px dashed #22304a; border-radius:14px; padding:14px}
-  .big{font-size:clamp(20px,5vw,36px); font-weight:800}
-  .muted{color:var(--muted)}
-  .table-wrap{width:100%; overflow-x:auto; border-radius:10px}
-  table{width:100%; border-collapse:collapse; font-size:14px; min-width:560px}
-  th,td{border-bottom:1px solid #1f2937; padding:8px 6px; text-align:left}
-  .price-edit{width:110px}
-  .footer{margin-top:10px; font-size:12px; color:#9ca3af}
-  .note{font-size:12px; color:#c7d2fe}
-  .pill{display:inline-block; padding:2px 8px; border:1px solid #334155; border-radius:999px; font-size:12px; color:#cbd5e1}
-  .ct-badge{font-size:12px; color:#fde68a}
-  .warn{font-size:12px; color:var(--warn); margin-top:6px}
-  /* Tablet ≤1024px: 2 cột */
-  @media (max-width:1024px){
-    .grid{grid-template-columns:1fr 1fr}
-    .col-2,.col-3,.col-4,.col-6{grid-column:span 2}
-  }
-  /* Mobile ≤640px: 1 cột + nút xếp dọc */
-  @media (max-width:640px){
-    body{padding:10px}
-    .grid{grid-template-columns:1fr}
-    .col-2,.col-3,.col-4,.col-6{grid-column:span 1}
-    .controls{grid-template-columns:1fr; gap:8px}
-    .pane{padding:10px}
-    #actionRow{flex-direction:column; align-items:stretch; gap:10px}
-    #actionRow .inline:last-child{width:100%}
-    .btn{width:100%}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tính Sao & Giá Cày Rank Liên Quân</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--fg:#e5e7eb;--acc:#22c55e;--border:#1f2937;--warn:#f59e0b;}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(160deg, #0b1020, #111827 45%, #0b1020); color:var(--fg);
+      display:flex; align-items:center; justify-content:center; padding:16px;
+    }
+    .wrap{max-width:980px; width:100%;}
+    .card{
+      background:rgba(17,24,39,.9);
+      border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow: 0 15px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(6px);
+    }
+    h1{margin:0 0 8px 0; font-size: clamp(18px, 3.6vw, 28px); letter-spacing:.2px}
+    p.lead{margin:0 0 12px 0; color:var(--muted); font-size:14px; line-height:1.4}
+    .grid{display:grid; grid-template-columns: repeat(6, 1fr); gap:12px; margin-top:12px}
+    .col-2{grid-column: span 2}
+    .col-3{grid-column: span 3}
+    .col-4{grid-column: span 4}
+    .col-6{grid-column: span 6}
+    .pane{background:#0b1220; border:1px solid var(--border); border-radius:14px; padding:12px}
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    select, input[type="number"]{
+      width:100%; padding:12px 12px; border-radius:10px; border:1px solid var(--border); background:#0e1627; color:var(--fg);
+      font-size:15px; outline:none; min-height:44px;
+    }
+    .controls{display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:8px}
+    .inline{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+    .btn{
+      cursor:pointer; border:1px solid #2a3446; background:#0e1627; color:var(--fg);
+      padding:12px 14px; border-radius:12px; font-weight:700; min-height:44px;
+    }
+    .btn.primary{background:var(--acc); border-color:#16a34a; color:#052e16}
+    .stat{
+      background:linear-gradient(180deg, #0a1426, #0c1220); border:1px dashed #22304a; border-radius:14px; padding:14px
+    }
+    .big{font-size: clamp(20px, 5vw, 36px); font-weight:800}
+    .muted{color:var(--muted)}
+    .table-wrap{width:100%; overflow-x:auto; border-radius:10px}
+    table{width:100%; border-collapse:collapse; font-size:14px; min-width:560px}
+    th, td{border-bottom:1px solid #1f2937; padding:8px 6px; text-align:left}
+    .price-edit{width:110px}
+    .footer{margin-top:10px; font-size:12px; color:#9ca3af}
+    .note{font-size:12px; color:#c7d2fe}
+    .pill{display:inline-block; padding:2px 8px; border:1px solid #334155; border-radius:999px; font-size:12px; color:#cbd5e1}
+    .ct-badge{font-size:12px; color:#fde68a}
+    .warn{font-size:12px; color:var(--warn); margin-top:6px}
+    /* Tablet: 1024↓ => 2 cột chính */
+    @media (max-width: 1024px){
+      .grid{grid-template-columns: 1fr 1fr;}
+      .col-2,.col-3,.col-4,.col-6{grid-column: span 2;}
+    }
+    /* Mobile: 640↓ => 1 cột, controls xếp dọc, nút bấm to */
+    @media (max-width: 640px){
+      body{padding:10px}
+      .grid{grid-template-columns: 1fr;}
+      .col-2,.col-3,.col-4,.col-6{grid-column: span 1;}
+      .controls{grid-template-columns:1fr; gap:8px}
+      .pane{padding:10px}
+      .btn{width:100%}
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>🛡️ Tính Sao & Giá Cày Rank Liên Quân</h1>
-      <p class="lead">Chọn rank hiện tại và mục tiêu. Công cụ sẽ tính tổng <b>sao</b> và <b>số tiền</b> theo bảng giá. <span class="ct-badge">Chiến tướng: nhập tổng sao (≥ 50).</span></p>
+      <p class="lead">Chọn rank hiện tại và mục tiêu. Công cụ sẽ tính tổng <b>sao</b> cần cày và <b>số tiền</b> theo bảng giá. 
+        <span class="ct-badge">Chiến tướng: nhập tổng sao (≥ 50) — không giới hạn tối đa.</span>
+      </p>
 
       <div class="grid">
         <div class="pane col-3">
@@ -86,7 +100,7 @@
         <div class="pane col-6">
           <div class="inline" id="actionRow" style="justify-content:space-between">
             <div class="inline">
-              <input id="carry" type="checkbox" checked style="width:20px;height:20px" />
+              <input id="carry" type="checkbox" checked style="width:20px; height:20px;"/>
               <label for="carry" style="margin:0">Cộng 1 sao khi thăng hạng <span class="pill">VD KC3 → KC1 = 9 sao</span></label>
             </div>
             <div class="inline" style="gap:8px">
@@ -107,7 +121,10 @@
 
         <div class="pane col-6">
           <div class="inline" style="justify-content:space-between">
-            <div><b>Bảng giá mỗi bậc</b><div class="note">Có thể chỉnh đơn giá (đ/sao).</div></div>
+            <div>
+              <b>Bảng giá mỗi bậc</b>
+              <div class="note">Bạn có thể chỉnh đơn giá (đ/ngôi sao) theo ý mình.</div>
+            </div>
             <button class="btn" id="resetPrice">Khôi phục mặc định</button>
           </div>
           <div class="table-wrap">
@@ -126,87 +143,267 @@
               <tbody id="breakdown"></tbody>
             </table>
           </div>
-          <div class="footer">Division (5→1) = 5 sao. <b>Chiến tướng:</b> nhập tổng sao (≥ 50).</div>
+          <div class="footer">Mặc định: mỗi division (5→1) có 5 sao. <b>Chiến tướng:</b> dùng tổng sao (≥ 50); có thể nhập tuỳ ý.</div>
         </div>
       </div>
     </div>
   </div>
 
 <script>
-const DIVS=[5,4,3,2,1],MAX_STARS=5,TIERS=["Kim Cương","Tinh Anh","Cao thủ","Đại cao thủ","Chiến tướng"];
-const DEFAULT_PRICES={"Kim Cương":3000,"Tinh Anh":5000,"Cao thủ":7000,"Đại cao thủ":10000,"Chiến tướng":15000};
-const CT_MIN=50;
-let prices={...DEFAULT_PRICES};
-const el=id=>document.getElementById(id);
-const option=list=>list.map(v=>`<option value="${v}">${v}</option>`).join("");
-const idxTier=t=>TIERS.indexOf(t);
-function fmt(n){try{return n.toLocaleString("vi-VN")}catch{return String(n)}}
-function mkDiv(id){return `<select id="${id}">${option(DIVS)}</select>`}
-function mkStar(id){return `<select id="${id}">${option([0,1,2,3,4])}</select>`}
-function mkCT(id){return `<input id="${id}" type="number" min="${CT_MIN}" step="1" placeholder="≥ ${CT_MIN}" value="${CT_MIN}"/>`}
+// ---------- CONFIG ----------
+const DIVS = [5,4,3,2,1];         // Division lớn -> nhỏ
+const MAX_STARS = 5;               // 5 sao mỗi division
+const TIERS = [
+  "Kim Cương",
+  "Tinh Anh",
+  "Cao thủ",
+  "Đại cao thủ",
+  "Chiến tướng"
+];
+
+// Giá mặc định theo ảnh: 3k, 5k, 7k, 10k, 15k / 1 sao
+const DEFAULT_PRICES = {
+  "Kim Cương": 3000,
+  "Tinh Anh": 5000,
+  "Cao thủ": 7000,
+  "Đại cao thủ": 10000,
+  "Chiến tướng": 15000
+};
+
+const CT_MIN = 50; // CT phải >= 50
+
+// ---------- STATE ----------
+let prices = {...DEFAULT_PRICES};
+
+// ---------- HELPERS ----------
+const el = (id) => document.getElementById(id);
+function formatVND(n){
+  try { return n.toLocaleString("vi-VN"); } catch { return String(n); }
+}
+function option(list){ return list.map(v => `<option value="${v}">${v}</option>`).join(""); }
+function indexOfTier(tier){ return TIERS.indexOf(tier); }
+
+function mkDivSelect(id){
+  return `<select id="${id}">${option(DIVS)}</select>`;
+}
+function mkStarSelect(id){
+  return `<select id="${id}">${option([0,1,2,3,4])}</select>`;
+}
+function mkCTInput(id){
+  return `<input id="${id}" type="number" min="${CT_MIN}" step="1" placeholder="≥ ${CT_MIN}" value="${CT_MIN}"/>`;
+}
 
 function renderInputs(prefix){
-  const tier=el(prefix+"Tier").value,divW=el(prefix+"DivWrap"),starW=el(prefix+"StarsWrap"),warn=el(prefix+"Warn");
-  if(tier==="Chiến tướng"){divW.innerHTML=mkCT(prefix+"CTStars"); starW.innerHTML=""; warn.style.display="block";}
-  else {divW.innerHTML=mkDiv(prefix+"Div"); starW.innerHTML=mkStar(prefix+"Stars"); warn.style.display="none";}
-  ["Div","Stars","CTStars"].forEach(s=>{const n=document.getElementById(prefix+s); if(n) n.addEventListener("change",calc);});
+  const tier = el(prefix+"Tier").value;
+  const divWrap = el(prefix+"DivWrap");
+  const starsWrap = el(prefix+"StarsWrap");
+  const warn = el(prefix+"Warn");
+  if(tier === "Chiến tướng"){
+    divWrap.innerHTML = mkCTInput(prefix+"CTStars");
+    starsWrap.innerHTML = ""; // không dùng
+    warn.style.display = "block";
+  }else{
+    divWrap.innerHTML = mkDivSelect(prefix+"Div");
+    starsWrap.innerHTML = mkStarSelect(prefix+"Stars");
+    warn.style.display = "none";
+  }
+  // bind change events to recalc
+  ["Div","Stars","CTStars"].forEach(suffix=>{
+    const node = document.getElementById(prefix+suffix);
+    if(node) node.addEventListener("change", calc);
+  });
 }
-function loadSelectors(){
-  el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
-  ["from","to"].forEach(renderInputs);
-  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
-  if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
-  if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
-}
-function loadPriceTable(){
-  const tb=el("priceTable");
-  tb.innerHTML=TIERS.map(t=>`<tr><td>${t}</td><td><input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/></td></tr>`).join("");
-  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const t=e.target.dataset.tier; prices[t]=Math.max(0,Math.round(Number(e.target.value||0))); calc();}));
-}
-function getCT(prefix){const i=el(prefix+"CTStars"); let v=Number((i?.value??CT_MIN)); if(isNaN(v)||v<CT_MIN){v=CT_MIN; if(i) i.value=CT_MIN;} return Math.floor(v)}
-function getState(prefix){const tier=el(prefix+"Tier").value;
-  if(tier==="Chiến tướng") return {ti:idxTier(tier), ct:getCT(prefix)};
-  return {ti:idxTier(tier), di:Number(el(prefix+"Div").value), st:Number(el(prefix+"Stars").value)};
-}
-function setState(prefix,obj){el(prefix+"Tier").value=TIERS[obj.ti]; renderInputs(prefix);
-  if(obj.ti===idxTier("Chiến tướng")){if(el(prefix+"CTStars")) el(prefix+"CTStars").value=Math.max(CT_MIN,obj.ct??CT_MIN);}
-  else {if(el(prefix+"Div")) el(prefix+"Div").value=obj.di; if(el(prefix+"Stars")) el(prefix+"Stars").value=obj.st;}
-}
-function lt(a,b){ if(a.ti!==b.ti) return a.ti<b.ti;
-  if(a.ti===idxTier("Chiến tướng")) return (a.ct??CT_MIN)<(b.ct??CT_MIN);
-  if(a.di!==b.di) return a.di>b.di; return a.st<b.st;
-}
-function notLT(a,b){return !lt(a,b)}
-function* starPath(from,to,carry){
-  let cur=JSON.parse(JSON.stringify(from)), last=idxTier("Chiến tướng");
-  const step=()=>{ if(cur.ti<last){
-      cur.st+=1; if(cur.st>=MAX_STARS){cur.st=carry?1:0; if(cur.di>1){cur.di-=1}else{cur.ti+=1; if(cur.ti<last){cur.di=5}else{cur.ct=Math.max(CT_MIN,carry?CT_MIN+1:CT_MIN); delete cur.di; delete cur.st;}}}
-    } else {cur.ct=Math.max(CT_MIN,(cur.ct??CT_MIN)+1);}
-  };
-  let stars=0, segFrom=JSON.parse(JSON.stringify(cur)), segTier=cur.ti;
-  while(lt(cur,to)){step(); stars+=1; if(cur.ti!==segTier){yield {from:{...segFrom},to:{...cur},stars,pricePerStar:prices[TIERS[segTier]]}; segFrom=JSON.parse(JSON.stringify(cur)); segTier=cur.ti; stars=0;}}
-  if(stars>0){yield {from:{...segFrom},to:{...to},stars,pricePerStar:prices[TIERS[segTier]]};}
-}
-function labelOf(s){const n=TIERS[s.ti]; return n==="Chiến tướng" ? `${n} • ${(s.ct??CT_MIN)} sao` : `${n} ${s.di} • ${s.st}/${MAX_STARS}`;}
-function calc(){
-  const from=getState("from"), to=getState("to"), carry=el("carry").checked, bd=el("breakdown"); bd.innerHTML="";
-  if(notLT(from,to)){el("starsTotal").textContent="0"; el("priceTotal").textContent="0"; bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return;}
-  let starsTotal=0, priceTotal=0;
-  for(const seg of starPath(from,to,carry)){starsTotal+=seg.stars; const m=seg.stars*seg.pricePerStar; priceTotal+=m;
-    bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(m)}</b></td></tr>`;}
-  el("starsTotal").textContent=fmt(starsTotal); el("priceTotal").textContent=fmt(priceTotal);
-}
-function swap(){const a=getState("from"), b=getState("to"); setState("from",b); setState("to",a); calc();}
 
-loadSelectors(); loadPriceTable();
-setState("from",{ti:idxTier("Kim Cương"),di:3,st:0});
-setState("to",{ti:idxTier("Kim Cương"),di:1,st:0});
+function loadSelectors(){
+  el("fromTier").innerHTML = option(TIERS);
+  el("toTier").innerHTML   = option(TIERS);
+  ["from","to"].forEach(renderInputs);
+  // defaults
+  el("fromTier").value = "Kim Cương";
+  el("toTier").value = "Kim Cương";
+  renderInputs("from");
+  renderInputs("to");
+  // set default states
+  if(el("fromDiv")) el("fromDiv").value = 3;
+  if(el("fromStars")) el("fromStars").value = 0;
+  if(el("toDiv")) el("toDiv").value = 1;
+  if(el("toStars")) el("toStars").value = 0;
+}
+
+function loadPriceTable(){
+  const tb = el("priceTable");
+  tb.innerHTML = TIERS.map(t => `
+    <tr>
+      <td>${t}</td>
+      <td>
+        <input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/>
+      </td>
+    </tr>
+  `).join("");
+  tb.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", e => {
+      const tier = e.target.dataset.tier;
+      const val = Number(e.target.value||0);
+      prices[tier] = Math.max(0, Math.round(val));
+      calc();
+    });
+  });
+}
+
+function getCT(prefix){
+  const elIn = el(prefix+"CTStars");
+  let v = Number((elIn?.value ?? CT_MIN));
+  if(isNaN(v) || v < CT_MIN){ v = CT_MIN; if(elIn){ elIn.value = CT_MIN; } }
+  return Math.floor(v);
+}
+
+function getState(prefix){
+  const tier = el(prefix+"Tier").value;
+  if(tier === "Chiến tướng"){
+    return {ti: indexOfTier(tier), ct: getCT(prefix)};
+  }else{
+    return {
+      ti: indexOfTier(tier),
+      di: Number(el(prefix+"Div").value),
+      st: Number(el(prefix+"Stars").value)
+    };
+  }
+}
+function setState(prefix, obj){
+  el(prefix+"Tier").value = TIERS[obj.ti];
+  renderInputs(prefix);
+  if(obj.ti === indexOfTier("Chiến tướng")){
+    if(el(prefix+"CTStars")) el(prefix+"CTStars").value = Math.max(CT_MIN, obj.ct ?? CT_MIN);
+  }else{
+    if(el(prefix+"Div")) el(prefix+"Div").value = obj.di;
+    if(el(prefix+"Stars")) el(prefix+"Stars").value = obj.st;
+  }
+}
+
+// So sánh a < b theo tiến trình rank
+function lt(a,b){
+  if(a.ti !== b.ti) return a.ti < b.ti;
+  if(a.ti === indexOfTier("Chiến tướng")){
+    return (a.ct ?? CT_MIN) < (b.ct ?? CT_MIN);
+  }else{
+    if(a.di !== b.di) return a.di > b.di; // 5 -> 4 -> ... -> 1
+    return a.st < b.st;
+  }
+}
+function notLT(a,b){ return !lt(a,b); }
+
+// generator đi từng sao, tách theo tier để áp giá
+function* starPath(from, to, carryStar){
+  let cur = JSON.parse(JSON.stringify(from));
+  const lastTier = indexOfTier("Chiến tướng");
+
+  const step = () => {
+    if(cur.ti < lastTier){
+      cur.st += 1;
+      if(cur.st >= MAX_STARS){
+        cur.st = carryStar ? 1 : 0;
+        if(cur.di > 1){
+          cur.di -= 1;
+        }else{
+          // sang tier mới
+          cur.ti += 1;
+          if(cur.ti < lastTier){
+            cur.di = 5;
+          }else{
+            // vào Chiến tướng
+            cur.ct = Math.max(CT_MIN, carryStar ? CT_MIN + 1 : CT_MIN);
+            delete cur.di; delete cur.st;
+          }
+        }
+      }
+    }else{
+      // ở Chiến tướng: tăng tổng sao
+      cur.ct = Math.max(CT_MIN, (cur.ct ?? CT_MIN) + 1);
+    }
+  };
+
+  let stars = 0;
+  let segFrom = JSON.parse(JSON.stringify(cur));
+  let segTier = cur.ti;
+
+  while(lt(cur, to)){
+    step();
+    stars += 1;
+    if(cur.ti !== segTier){
+      yield {from: {...segFrom}, to: {...cur}, stars, pricePerStar: prices[TIERS[segTier]]};
+      segFrom = JSON.parse(JSON.stringify(cur)); segTier = cur.ti; stars = 0;
+    }
+  }
+  if(stars>0){
+    yield {from: {...segFrom}, to: {...to}, stars, pricePerStar: prices[TIERS[segTier]]};
+  }
+}
+
+// ---------- CALC ----------
+function labelOf(state){
+  const tierName = TIERS[state.ti];
+  if(tierName === "Chiến tướng"){
+    const ct = state.ct ?? CT_MIN;
+    return `${tierName} • ${ct} sao`;
+  }else{
+    return `${tierName} ${state.di} • ${state.st}/${MAX_STARS}`;
+  }
+}
+
+function calc(){
+  const from = getState("from");
+  const to   = getState("to");
+  const carry = el("carry").checked;
+  const bd = el("breakdown");
+  bd.innerHTML = "";
+
+  if(notLT(from, to)){
+    el("starsTotal").textContent = "0";
+    el("priceTotal").textContent = "0";
+    bd.innerHTML = `<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`;
+    return;
+  }
+
+  let starsTotal = 0, priceTotal = 0;
+  for(const seg of starPath(from, to, carry)){
+    starsTotal += seg.stars;
+    const money = seg.stars * seg.pricePerStar;
+    priceTotal += money;
+    bd.innerHTML += `<tr>
+      <td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td>
+      <td>${seg.stars}</td>
+      <td>${formatVND(seg.pricePerStar)}</td>
+      <td><b>${formatVND(money)}</b></td>
+    </tr>`;
+  }
+  el("starsTotal").textContent = formatVND(starsTotal);
+  el("priceTotal").textContent = formatVND(priceTotal);
+}
+
+function swap(){
+  const a = getState("from");
+  const b = getState("to");
+  setState("from", b);
+  setState("to", a);
+  calc();
+}
+
+// ---------- INIT ----------
+loadSelectors();
+loadPriceTable();
+// Mặc định: từ Kim Cương 3 (0 sao) -> Kim Cương 1 (0 sao)
+setState("from", {ti:indexOfTier("Kim Cương"), di:3, st:0});
+setState("to",   {ti:indexOfTier("Kim Cương"), di:1, st:0});
 calc();
-["fromTier","toTier"].forEach(id=>el(id).addEventListener("change",e=>{renderInputs(id.replace("Tier","")); calc();}));
-el("calc").addEventListener("click",calc);
-el("swap").addEventListener("click",swap);
-el("resetPrice").addEventListener("click",()=>{prices={...DEFAULT_PRICES}; loadPriceTable(); calc();});
-el("carry").addEventListener("change",calc);
+
+// Listeners
+["fromTier","toTier"].forEach(id => {
+  el(id).addEventListener("change", e => { renderInputs(id.replace("Tier","")); calc(); });
+});
+el("calc").addEventListener("click", calc);
+el("swap").addEventListener("click", swap);
+el("resetPrice").addEventListener("click", () => { prices = {...DEFAULT_PRICES}; loadPriceTable(); calc(); });
+["carry"].forEach(id=> el(id).addEventListener("change", calc));
 </script>
 </body>
 </html>
