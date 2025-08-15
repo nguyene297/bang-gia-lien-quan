@@ -3,85 +3,59 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tính Sao & Giá Cày Rank Liên Quân + Doanh thu (Sheets)</title>
+<title>Cày Rank + Thuê Slot (Sheets)</title>
 <style>
   *,*::before,*::after{box-sizing:border-box}
-  :root{
-    --bg:#0f172a;--card:#111827;--muted:#94a3b8;--fg:#e5e7eb;
-    --acc:#22c55e;--border:#1f2937;--warn:#f59e0b;
-    --fs-base:15px; --pad:12px; --btn-pad:12px; --minh:44px; --big:36px;
-  }
-  body.compact{ --fs-base:13px; --pad:8px; --btn-pad:9px; --minh:36px; --big:30px; }
+  :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--fg:#e5e7eb;--acc:#22c55e;--border:#1f2937;--warn:#f59e0b;
+        --fs-base:15px;--pad:12px;--btn-pad:12px;--minh:44px;--big:36px}
+  body.compact{--fs-base:13px;--pad:8px;--btn-pad:9px;--minh:36px;--big:30px}
   html,body{height:100%}
-  body{
-    margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    background:linear-gradient(160deg,#0b1020,#111827 45%,#0b1020); color:var(--fg);
-    display:block; overflow-x:hidden;
-  }
-  .wrap{max-width:980px; width:100%; margin:16px auto; padding:0 12px;}
-  .card{background:rgba(17,24,39,.9); border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 15px 40px rgba(0,0,0,.35)}
-  h1{margin:0 0 8px 0; font-size:clamp(18px,3.6vw,28px)}
-  p.lead{margin:0 0 12px 0; color:var(--muted); font-size:14px; line-height:1.4}
-  .grid{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:12px}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(160deg,#0b1020,#111827 45%,#0b1020);color:var(--fg);display:block;overflow-x:hidden}
+  .wrap{max-width:980px;width:100%;margin:16px auto;padding:0 12px}
+  .card{background:rgba(17,24,39,.9);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 15px 40px rgba(0,0,0,.35)}
+  h1{margin:0 0 8px 0;font-size:clamp(18px,3.6vw,28px)}
+  p.lead{margin:0 0 12px 0;color:var(--muted);font-size:14px;line-height:1.4}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:12px}
   .col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}
-  .pane{background:#0b1220; border:1px solid var(--border); border-radius:14px; padding:12px}
-  label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
-  select,input[type="number"],input[type="text"]{
-    width:100%; padding:var(--pad); border-radius:10px; border:1px solid var(--border);
-    background:#0e1627; color:var(--fg); font-size:var(--fs-base); outline:none; min-height:var(--minh)
-  }
-  .controls{display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:8px}
-  .inline{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-  .btn{cursor:pointer; border:1px solid #2a3446; background:#0e1627; color:var(--fg);
-       padding:var(--btn-pad) 14px; border-radius:12px; font-weight:700; min-height:var(--minh)}
-  .btn.primary{background:var(--acc); border-color:#16a34a; color:#052e16}
-  .stat{background:linear-gradient(180deg,#0a1426,#0c1220); border:1px dashed #22304a; border-radius:14px; padding:14px}
-  .big{font-size:clamp(20px,5vw,var(--big)); font-weight:800}
+  .pane{background:#0b1220;border:1px solid var(--border);border-radius:14px;padding:12px}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  select,input[type="number"],input[type="text"]{width:100%;padding:var(--pad);border-radius:10px;border:1px solid var(--border);background:#0e1627;color:var(--fg);font-size:var(--fs-base);outline:none;min-height:var(--minh)}
+  .controls{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px}
+  .controls-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .btn{cursor:pointer;border:1px solid #2a3446;background:#0e1627;color:var(--fg);padding:var(--btn-pad) 14px;border-radius:12px;font-weight:700;min-height:var(--minh)}
+  .btn.primary{background:var(--acc);border-color:#16a34a;color:#052e16}
+  .stat{background:linear-gradient(180deg,#0a1426,#0c1220);border:1px dashed #22304a;border-radius:14px;padding:14px}
+  .big{font-size:clamp(20px,5vw,var(--big));font-weight:800}
   .muted{color:var(--muted)}
-  .table-wrap{width:100%; overflow-x:auto; border-radius:10px}
-  table{width:100%; border-collapse:collapse; font-size:14px; min-width:560px}
-  th,td{border-bottom:1px solid #1f2937; padding:8px 6px; text-align:left}
+  .table-wrap{width:100%;overflow-x:auto;border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+  th,td{border-bottom:1px solid #1f2937;padding:8px 6px;text-align:left}
   .price-edit{width:110px}
-  .footer{margin-top:10px; font-size:12px; color:#9ca3af}
-  .note{font-size:12px; color:#c7d2fe}
-  .pill{display:inline-block; padding:2px 8px; border:1px solid #334155; border-radius:999px; font-size:12px; color:#cbd5e1}
-  .ct-badge{font-size:12px; color:#fde68a}
-  .warn{font-size:12px; color:var(--warn); margin-top:6px}
-  @media (max-width:1024px){ .grid{grid-template-columns:1fr 1fr} .col-2,.col-3,.col-4,.col-6{grid-column:span 2} }
-  @media (max-width:640px){
-    .grid{grid-template-columns:1fr}
-    .col-2,.col-3,.col-4,.col-6{grid-column:span 1}
-    .controls{grid-template-columns:1fr; gap:8px}
-    .pane{padding:10px}
-    #actionRow{flex-direction:column; align-items:stretch; gap:10px}
-    #actionRow .inline:last-child{width:100%}
-    .btn{width:100%}
-  }
-  /* Thanh trượt cuộn trang */
-  #scrollBarWrap{
-    position:fixed; left:0; right:0; bottom:0; padding:6px 10px;
-    background:rgba(2,6,23,.75); backdrop-filter:blur(6px); border-top:1px solid #0b1220; z-index:50;
-  }
-  #scrollSlider{ width:100%; appearance:none; height:6px; border-radius:999px; background:#1f2937; outline:none }
-  #scrollSlider::-webkit-slider-thumb{ appearance:none; width:18px; height:18px; border-radius:50%; background:#22c55e; border:2px solid #14532d }
+  .footer{margin-top:10px;font-size:12px;color:#9ca3af}
+  .note{font-size:12px;color:#c7d2fe}.pill{display:inline-block;padding:2px 8px;border:1px solid #334155;border-radius:999px;font-size:12px;color:#cbd5e1}
+  .ct-badge{font-size:12px;color:#fde68a}.warn{font-size:12px;color:var(--warn);margin-top:6px}
+  @media (max-width:1024px){.grid{grid-template-columns:1fr 1fr}.col-2,.col-3,.col-4,.col-6{grid-column:span 2}}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}.col-2,.col-3,.col-4,.col-6{grid-column:span 1}.controls,.controls-3{grid-template-columns:1fr;gap:8px}.pane{padding:10px}#actionRow{flex-direction:column;align-items:stretch;gap:10px}#actionRow .inline:last-child{width:100%}.btn{width:100%}}
+  #scrollBarWrap{position:fixed;left:0;right:0;bottom:0;padding:6px 10px;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);border-top:1px solid #0b1220;z-index:50}
+  #scrollSlider{width:100%;appearance:none;height:6px;border-radius:999px;background:#1f2937;outline:none}
+  #scrollSlider::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:#22c55e;border:2px solid #14532d}
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>🛡️ Tính Sao & Giá Cày Rank Liên Quân</h1>
+      <h1>🛡️ Cày Rank & Thuê Slot</h1>
       <p class="lead">
         <span class="inline" style="gap:12px">
-          <span>Chọn rank hiện tại và mục tiêu để tính <b>sao</b> & <b>giá</b>.</span>
-          <label class="inline" style="gap:6px; cursor:pointer">
-            <input id="compactToggle" type="checkbox" />
-            <span class="pill">Chế độ gọn (mobile)</span>
-          </label>
+          <span>Tính cày rank & thuê slot (tách riêng). Lưu đơn vào Google Sheets.</span>
+          <label class="inline" style="gap:6px;cursor:pointer"><input id="compactToggle" type="checkbox"/><span class="pill">Chế độ gọn (mobile)</span></label>
         </span>
-        <br/><span class="ct-badge">Chiến tướng: nhập tổng sao (≥ 50).</span>
+        <br><span class="ct-badge">Từ <b>Cao thủ</b> nhập tổng sao: CT 1–9 • ĐCT 10–49 • CTướng ≥50.</span>
       </p>
 
       <div class="grid">
+        <!-- ===== CÀY RANK ===== -->
         <div class="pane col-3">
           <label>Rank hiện tại</label>
           <div class="controls">
@@ -89,7 +63,7 @@
             <div id="fromDivWrap"></div>
             <div id="fromStarsWrap"></div>
           </div>
-          <div id="fromWarn" class="warn" style="display:none">Chiến tướng phải ≥ 50 sao.</div>
+          <div id="fromWarn" class="warn" style="display:none"></div>
         </div>
 
         <div class="pane col-3">
@@ -99,34 +73,34 @@
             <div id="toDivWrap"></div>
             <div id="toStarsWrap"></div>
           </div>
-          <div id="toWarn" class="warn" style="display:none">Chiến tướng phải ≥ 50 sao.</div>
+          <div id="toWarn" class="warn" style="display:none"></div>
         </div>
 
         <div class="pane col-6">
           <div class="inline" id="actionRow" style="justify-content:space-between">
             <div class="inline">
-              <input id="carry" type="checkbox" checked style="width:18px; height:18px"/>
-              <label for="carry" style="margin:0">Cộng 1 sao khi thăng hạng <span class="pill">VD KC3 → KC1 = 9 sao</span></label>
+              <input id="carry" type="checkbox" checked style="width:18px;height:18px"/>
+              <label for="carry" style="margin:0">Cộng 1 sao khi thăng hạng (áp dụng khi lên bậc KC/TA → bậc cao hơn).</label>
             </div>
             <div class="inline" style="gap:8px">
               <button class="btn" id="swap">Đổi chỗ (↑↓)</button>
-              <button class="btn primary" id="calc">Tính ngay</button>
+              <button class="btn primary" id="calc">Tính cày rank</button>
             </div>
           </div>
         </div>
 
         <div class="pane col-4 stat">
-          <div class="muted">Tổng số sao</div>
+          <div class="muted">Tổng số sao (cày rank)</div>
           <div id="starsTotal" class="big">0</div>
         </div>
         <div class="pane col-2 stat">
-          <div class="muted">Tổng tiền (VND)</div>
+          <div class="muted">Tiền cày rank (VND)</div>
           <div id="priceTotal" class="big">0</div>
         </div>
 
         <div class="pane col-6">
           <div class="inline" style="justify-content:space-between">
-            <div><b>Bảng giá mỗi bậc</b><div class="note">Có thể chỉnh đơn giá (đ/sao).</div></div>
+            <div><b>Bảng giá cày rank</b><div class="note">Chỉnh đơn giá (đ/sao) theo bậc.</div></div>
             <button class="btn" id="resetPrice">Khôi phục mặc định</button>
           </div>
           <div class="table-wrap">
@@ -138,26 +112,41 @@
         </div>
 
         <div class="pane col-6">
-          <b>Chi tiết tính toán</b>
+          <b>Chi tiết tính cày rank</b>
           <div class="table-wrap">
             <table>
               <thead><tr><th>Khoảng</th><th>Số sao</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
               <tbody id="breakdown"></tbody>
             </table>
           </div>
-          <div class="footer">Division (5→1) = 5 sao. <b>Chiến tướng:</b> nhập tổng sao (≥ 50).</div>
+          <div class="footer">KC/TA: mỗi division có 5 sao. Cao thủ trở lên nhập tổng sao.</div>
         </div>
 
-        <!-- Thông tin đơn & lưu Sheets -->
+        <!-- ===== THUÊ SLOT (TÁCH RIÊNG) ===== -->
         <div class="pane col-6">
-          <b>Thông tin đơn hàng</b>
-          <div class="controls" style="grid-template-columns:1fr 1fr 1fr">
-            <input id="staff" type="text" placeholder="Nô lệ" />
-            <input id="customer" type="text" placeholder="Thượng đế" />
-            <input id="note" type="text" placeholder="Ghi chú (tướng, yêu cầu…)" />
+          <b>Thuê slot (tính riêng)</b>
+          <div class="controls-3">
+            <div><label>Số giờ thuê</label><input id="slotHours" type="number" step="0.5" min="0" placeholder="VD 1.5" value="0"></div>
+            <div><label>Giá / giờ (đ)</label><input id="slotRate" type="number" min="0" step="1000" value="30000"></div>
+            <div class="stat"><div class="muted">Tiền thuê slot</div><div id="slotMoney" class="big">0</div></div>
           </div>
-          <div class="inline" style="margin-top:10px; gap:8px; flex-wrap:wrap">
-            <button class="btn" onclick="saveOrder()">💾 Lưu đơn lên Google Sheets</button>
+          <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="calcSlot">Tính thuê slot</button>
+            <button class="btn" onclick="saveSlot()">💾 Lưu đơn Thuê slot</button>
+            <span class="muted">* Không cộng vào tiền cày rank</span>
+          </div>
+        </div>
+
+        <!-- ===== THÔNG TIN ĐƠN / THỐNG KÊ ===== -->
+        <div class="pane col-6">
+          <b>Thông tin chung</b>
+          <div class="controls-3">
+            <input id="staff" type="text" placeholder="Nô lệ">
+            <input id="customer" type="text" placeholder="Thượng đế (tên/SDT)">
+            <input id="note" type="text" placeholder="Ghi chú (tướng, yêu cầu…)">
+          </div>
+          <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="saveOrder()">💾 Lưu đơn Cày rank</button>
             <button class="btn" onclick="fetchStats()">📊 Lấy thống kê</button>
             <span id="saveMsg" class="muted"></span>
           </div>
@@ -172,150 +161,256 @@
   </div>
 
   <!-- Thanh trượt cuộn trang -->
-  <div id="scrollBarWrap">
-    <input id="scrollSlider" type="range" min="0" max="100" value="0" />
-  </div>
+  <div id="scrollBarWrap"><input id="scrollSlider" type="range" min="0" max="100" value="0"></div>
 
 <script>
-/* ====== GOOGLE SHEETS CONFIG (điền đúng API_KEY của bạn) ====== */
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec';
-const API_KEY    = 'abc123'; // <-- sửa cho trùng với const API_KEY trong Apps Script
+/* ====== GOOGLE SHEETS CONFIG ====== */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec';   // <- dán URL /exec của bạn
+const API_KEY    = 'abc123';                   // <- trùng với Apps Script
 
-/* ====== APP LOGIC ====== */
+/* ====== THAM SỐ NGƯỠNG SAO ====== */
+const CTU_MIN=1,  CTU_MAX=9;    // Cao thủ
+const DCT_MIN=10, DCT_MAX=49;   // Đại cao thủ
+const CT_MIN=50, CT_MAX=150;    // Chiến tướng (có thể đổi)
+
 const DIVS=[5,4,3,2,1],MAX_STARS=5,TIERS=["Kim Cương","Tinh Anh","Cao thủ","Đại cao thủ","Chiến tướng"];
 const DEFAULT_PRICES={"Kim Cương":3000,"Tinh Anh":5000,"Cao thủ":7000,"Đại cao thủ":10000,"Chiến tướng":15000};
-const CT_MIN=50;
 let prices={...DEFAULT_PRICES};
 const el=id=>document.getElementById(id);
 const option=list=>list.map(v=>`<option value="${v}">${v}</option>`).join("");
 const idxTier=t=>TIERS.indexOf(t);
 function fmt(n){try{return n.toLocaleString("vi-VN")}catch{return String(n)}}
+
+/* ==== UI parts for inputs ==== */
 function mkDiv(id){return `<select id="${id}">${option(DIVS)}</select>`}
 function mkStar(id){return `<select id="${id}">${option([0,1,2,3,4])}</select>`}
-function mkCT(id){return `<input id="${id}" type="number" min="${CT_MIN}" step="1" placeholder="≥ ${CT_MIN}" value="${CT_MIN}"/>`}
+function mkAbs(id,min,max,ph){return `<input id="${id}" type="number" min="${min}" ${max?`max="${max}"`:""} step="1" placeholder="${ph}" value="${min}"/>`}
 
+function warnText(tier){
+  if(tier==="Cao thủ") return `Nhập tổng sao ${CTU_MIN}–${CTU_MAX}.`;
+  if(tier==="Đại cao thủ") return `Nhập tổng sao ${DCT_MIN}–${DCT_MAX}.`;
+  if(tier==="Chiến tướng") return `Nhập tổng sao ≥ ${CT_MIN}.`;
+  return "";
+}
+
+/* ==== Render inputs per tier ==== */
 function renderInputs(prefix){
   const tier=el(prefix+"Tier").value,divW=el(prefix+"DivWrap"),starW=el(prefix+"StarsWrap"),warn=el(prefix+"Warn");
-  if(tier==="Chiến tướng"){divW.innerHTML=mkCT(prefix+"CTStars"); starW.innerHTML=""; if(warn) warn.style.display="block";}
-  else {divW.innerHTML=mkDiv(prefix+"Div"); starW.innerHTML=mkStar(prefix+"Stars"); if(warn) warn.style.display="none";}
-  ["Div","Stars","CTStars"].forEach(s=>{const n=document.getElementById(prefix+s); if(n) n.addEventListener("change",calc);});
+  if(tier==="Kim Cương" || tier==="Tinh Anh"){
+    divW.innerHTML=mkDiv(prefix+"Div");
+    starW.innerHTML=mkStar(prefix+"Stars");
+    if(warn){warn.style.display="none"; warn.textContent="";}
+  }else if(tier==="Cao thủ"){
+    divW.innerHTML=mkAbs(prefix+"ABS", CTU_MIN, CTU_MAX, `${CTU_MIN}–${CTU_MAX} sao`);
+    starW.innerHTML="";
+    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
+  }else if(tier==="Đại cao thủ"){
+    divW.innerHTML=mkAbs(prefix+"ABS", DCT_MIN, DCT_MAX, `${DCT_MIN}–${DCT_MAX} sao`);
+    starW.innerHTML="";
+    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
+  }else{ // Chiến tướng
+    divW.innerHTML=mkAbs(prefix+"ABS", CT_MIN, CT_MAX, `≥ ${CT_MIN} sao`);
+    starW.innerHTML="";
+    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
+  }
+  ["Div","Stars","ABS"].forEach(s=>{const n=document.getElementById(prefix+s); if(n) n.addEventListener("change",calc);});
 }
+
 function loadSelectors(){
-  el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
+  el("fromTier").innerHTML=option(TIERS);
+  el("toTier").innerHTML=option(TIERS);
   ["from","to"].forEach(renderInputs);
-  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
+  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương";
+  renderInputs("from"); renderInputs("to");
   if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
   if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
 }
+
 function loadPriceTable(){
   const tb=el("priceTable");
   tb.innerHTML=TIERS.map(t=>`<tr><td>${t}</td><td><input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/></td></tr>`).join("");
   tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const t=e.target.dataset.tier; prices[t]=Math.max(0,Math.round(Number(e.target.value||0))); calc();}));
 }
-function getCT(prefix){const i=el(prefix+"CTStars"); let v=Number((i?.value??CT_MIN)); if(isNaN(v)||v<CT_MIN){v=CT_MIN; if(i) i.value=CT_MIN;} return Math.floor(v)}
-function getState(prefix){const tier=el(prefix+"Tier").value;
-  if(tier==="Chiến tướng") return {ti:idxTier(tier), ct:getCT(prefix)};
-  return {ti:idxTier(tier), di:Number(el(prefix+"Div").value), st:Number(el(prefix+"Stars").value)};
+
+/* ==== State helpers ==== */
+function getABS(prefix){
+  const i=el(prefix+"ABS"); if(!i) return null;
+  let v=Number(i.value||0);
+  const tier=el(prefix+"Tier").value;
+  if(tier==="Cao thủ"){ if(v<CTU_MIN) v=CTU_MIN; if(v>CTU_MAX) v=CTU_MAX; }
+  else if(tier==="Đại cao thủ"){ if(v<DCT_MIN) v=DCT_MIN; if(v>DCT_MAX) v=DCT_MAX; }
+  else if(tier==="Chiến tướng"){ if(v<CT_MIN) v=CT_MIN; if(CT_MAX && v>CT_MAX) v=CT_MAX; }
+  i.value=v; return v;
 }
-function setState(prefix,obj){el(prefix+"Tier").value=TIERS[obj.ti]; renderInputs(prefix);
-  if(obj.ti===idxTier("Chiến tướng")){if(el(prefix+"CTStars")) el(prefix+"CTStars").value=Math.max(CT_MIN,obj.ct??CT_MIN);}
-  else {if(el(prefix+"Div")) el(prefix+"Div").value=obj.di; if(el(prefix+"Stars")) el(prefix+"Stars").value=obj.st;}
+function getState(prefix){
+  const tier=el(prefix+"Tier").value;
+  if(tier==="Kim Cương" || tier==="Tinh Anh")
+    return {ti:idxTier(tier), di:Number(el(prefix+"Div").value), st:Number(el(prefix+"Stars").value)};
+  return {ti:idxTier(tier), abs:getABS(prefix)};
 }
-function lt(a,b){ if(a.ti!==b.ti) return a.ti<b.ti;
-  if(a.ti===idxTier("Chiến tướng")) return (a.ct??CT_MIN)<(b.ct??CT_MIN);
-  if(a.di!==b.di) return a.di>b.di; return a.st<b.st;
+function setState(prefix,obj){
+  el(prefix+"Tier").value=TIERS[obj.ti]; renderInputs(prefix);
+  if(obj.ti<=idxTier("Tinh Anh")){ if(el(prefix+"Div")) el(prefix+"Div").value=obj.di; if(el(prefix+"Stars")) el(prefix+"Stars").value=obj.st; }
+  else{ if(el(prefix+"ABS")) el(prefix+"ABS").value=obj.abs; }
+}
+
+/* ==== Ordering and stepping ==== */
+function lt(a,b){
+  if(a.ti!==b.ti) return a.ti<b.ti;
+  if(a.ti<=idxTier("Tinh Anh")){ // KC/TA
+    if(a.di!==b.di) return a.di>b.di;
+    return a.st<b.st;
+  }else{ // >= Cao thủ dùng abs
+    return (a.abs||0) < (b.abs||0);
+  }
 }
 function notLT(a,b){return !lt(a,b)}
-function* starPath(from,to,carry){
-  let cur=JSON.parse(JSON.stringify(from)), last=idxTier("Chiến tướng");
-  const step=()=>{ if(cur.ti<last){
-      cur.st+=1; if(cur.st>=MAX_STARS){cur.st=carry?1:0; if(cur.di>1){cur.di-=1}else{cur.ti+=1; if(cur.ti<last){cur.di=5}else{cur.ct=Math.max(CT_MIN,carry?CT_MIN+1:CT_MIN); delete cur.di; delete cur.st;}}}
-    } else {cur.ct=Math.max(CT_MIN,(cur.ct??CT_MIN)+1);}
-  };
-  let stars=0, segFrom=JSON.parse(JSON.stringify(cur)), segTier=cur.ti;
-  while(lt(cur,to)){step(); stars+=1; if(cur.ti!==segTier){yield {from:{...segFrom},to:{...cur},stars,pricePerStar:prices[TIERS[segTier]]}; segFrom=JSON.parse(JSON.stringify(cur)); segTier=cur.ti; stars=0;}}
-  if(stars>0){yield {from:{...segFrom},to:{...to},stars,pricePerStar:prices[TIERS[segTier]]};}
+
+/* Increase one star step */
+function stepOnce(cur,carry){
+  const last=idxTier("Chiến tướng");
+  if(cur.ti<=idxTier("Tinh Anh")){
+    cur.st+=1;
+    if(cur.st>=MAX_STARS){
+      cur.st = carry?1:0;
+      if(cur.di>1){cur.di-=1}
+      else{
+        cur.ti += 1;
+        if(cur.ti<=idxTier("Tinh Anh")){ cur.di=5; } // vào bậc tiếp theo KC/TA
+        else{ // chuyển sang Cao thủ
+          cur.abs = Math.max(CTU_MIN, carry?CTU_MIN+1:CTU_MIN);
+          delete cur.di; delete cur.st;
+        }
+      }
+    }
+  }else{
+    // từ Cao thủ trở lên: tăng abs
+    cur.abs = (cur.abs|| (cur.ti===idxTier("Cao thủ")?CTU_MIN:DCT_MIN)) + 1;
+    // đổi tier khi qua ngưỡng
+    if(cur.ti===idxTier("Cao thủ") && cur.abs>=DCT_MIN){ cur.ti=idxTier("Đại cao thủ"); }
+    if(cur.ti===idxTier("Đại cao thủ") && cur.abs>=CT_MIN){ cur.ti=idxTier("Chiến tướng"); }
+  }
 }
-function labelOf(s){const n=TIERS[s.ti]; return n==="Chiến tướng" ? `${n} • ${(s.ct??CT_MIN)} sao` : `${n} ${s.di} • ${s.st}/${MAX_STARS}`;}
+
+/* Tạo các đoạn tính tiền theo bậc */
+function* starPath(from,to,carry){
+  let cur=JSON.parse(JSON.stringify(from));
+  let segFrom=JSON.parse(JSON.stringify(cur)), segTier=cur.ti, stars=0;
+
+  while(lt(cur,to)){
+    stepOnce(cur,carry);
+    stars+=1;
+    if(cur.ti!==segTier){ // đổi bậc → chốt đoạn
+      yield {from:{...segFrom},to:{...cur},stars,pricePerStar:prices[TIERS[segTier]]};
+      segFrom=JSON.parse(JSON.stringify(cur)); segTier=cur.ti; stars=0;
+    }
+  }
+  if(stars>0){ yield {from:{...segFrom},to:{...to},stars,pricePerStar:prices[TIERS[segTier]]}; }
+}
+
+function labelOf(s){
+  const n=TIERS[s.ti];
+  if(s.ti<=idxTier("Tinh Anh")) return `${n} ${s.di} • ${s.st}/${MAX_STARS}`;
+  return `${n} • ${(s.abs)} sao`;
+}
+
+/* ==== MAIN CALC ==== */
 function calc(){
   const from=getState("from"), to=getState("to"), carry=el("carry").checked, bd=el("breakdown"); bd.innerHTML="";
-  if(notLT(from,to)){el("starsTotal").textContent="0"; el("priceTotal").textContent="0"; bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return;}
+  if(notLT(from,to)){ el("starsTotal").textContent="0"; el("priceTotal").textContent="0";
+    bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return; }
   let starsTotal=0, priceTotal=0;
-  for(const seg of starPath(from,to,carry)){starsTotal+=seg.stars; const m=seg.stars*seg.pricePerStar; priceTotal+=m;
-    bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(m)}</b></td></tr>`;}
+  for(const seg of starPath(from,to,carry)){
+    starsTotal+=seg.stars; const money=seg.stars*seg.pricePerStar; priceTotal+=money;
+    bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(money)}</b></td></tr>`;
+  }
   el("starsTotal").textContent=fmt(starsTotal); el("priceTotal").textContent=fmt(priceTotal);
 }
 function swap(){const a=getState("from"), b=getState("to"); setState("from",b); setState("to",a); calc();}
 
-/* === Google Sheets: snapshot + save + stats === */
+/* ====== SLOT (TÁCH RIÊNG) ====== */
+function calcSlotNow(){
+  const h = Math.max(0, Number(el('slotHours').value||0));
+  const rate = Math.max(0, Number(el('slotRate').value||0));
+  el('slotMoney').textContent = fmt(Math.round(h*rate));
+}
+el('calcSlot').addEventListener('click', calcSlotNow);
+['slotHours','slotRate'].forEach(id=> el(id).addEventListener('input', calcSlotNow));
+
+/* ====== SHEETS SAVE & STATS ====== */
 function snapshotOrder(){
   const fromTier=el("fromTier").value, toTier=el("toTier").value;
   let from={tier:fromTier}, to={tier:toTier};
-  if(fromTier==="Chiến tướng") from.starsOrCT=Number(el("fromCTStars").value);
-  else { from.div=Number(el("fromDiv").value); from.starsOrCT=Number(el("fromStars").value); }
-  if(toTier==="Chiến tướng") to.starsOrCT=Number(el("toCTStars").value);
-  else { to.div=Number(el("toDiv").value); to.starsOrCT=Number(el("toStars").value); }
+  if(idxTier(fromTier)<=idxTier("Tinh Anh")){ from.div=Number(el("fromDiv").value); from.starsOrCT=Number(el("fromStars").value); }
+  else{ from.starsOrCT=Number(el("fromABS").value); }
+  if(idxTier(toTier)<=idxTier("Tinh Anh")){ to.div=Number(el("toDiv").value); to.starsOrCT=Number(el("toStars").value); }
+  else{ to.starsOrCT=Number(el("toABS").value); }
   const starsTotal=parseInt(el("starsTotal").textContent.replace(/\D/g,''))||0;
   const priceTotal=parseInt(el("priceTotal").textContent.replace(/\D/g,''))||0;
-  return {
-    staff: el("staff").value.trim(),
-    customer: el("customer").value.trim(),
-    note: el("note").value.trim(),
-    from, to,
-    carry: el("carry").checked,
-    starsTotal, priceTotal
-  };
+  return { staff:el("staff").value.trim(), customer:el("customer").value.trim(), note:el("note").value.trim(),
+           from,to, carry:el("carry").checked, starsTotal, priceTotal };
 }
 async function saveOrder(){
   try{
-    if(!SHEETS_URL || !API_KEY){ alert("Chưa cấu hình SHEETS_URL / API_KEY"); return; }
-    const order=snapshotOrder();
-    const payload={ apiKey:API_KEY, ...order };
-    const body=new URLSearchParams({ payload: JSON.stringify(payload) });
-    const res=await fetch(SHEETS_URL,{ method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body });
-    const text=await res.text(); let data={}; try{ data=JSON.parse(text) }catch{ data={ok:false,error:text} }
-    el("saveMsg").textContent = data.ok ? "✅ Đã lưu đơn." : ("❌ Lỗi: " + (data.error||""));
-  }catch(err){ el("saveMsg").textContent="❌ Lỗi mạng: "+err; }
+    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
+    const payload={ apiKey:API_KEY, ...snapshotOrder() };
+    const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({payload:JSON.stringify(payload)})});
+    const text=await res.text(); let data={}; try{data=JSON.parse(text)}catch{data={ok:false,error:text}}
+    el("saveMsg").textContent=data.ok?"✅ Đã lưu đơn cày rank.":("❌ Lỗi: "+(data.error||""));
+  }catch(err){el("saveMsg").textContent="❌ Lỗi mạng: "+err;}
+}
+async function saveSlot(){
+  try{
+    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
+    const h=Math.max(0,Number(el('slotHours').value||0));
+    const rate=Math.max(0,Number(el('slotRate').value||0));
+    const money=Math.round(h*rate);
+    const payload={ apiKey:API_KEY,
+      staff:el("staff").value.trim(), customer:el("customer").value.trim(),
+      note:`Thuê slot ${h} giờ @${fmt(rate)}/h`,
+      from:{tier:"Thuê slot"}, to:{tier:"Thuê slot"},
+      carry:false, starsTotal:0, priceTotal:money
+    };
+    const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({payload:JSON.stringify(payload)})});
+    const text=await res.text(); let data={}; try{data=JSON.parse(text)}catch{data={ok:false,error:text}}
+    el("saveMsg").textContent=data.ok?"✅ Đã lưu đơn Thuê slot.":("❌ Lỗi: "+(data.error||""));
+  }catch(err){el("saveMsg").textContent="❌ Lỗi mạng: "+err;}
 }
 async function fetchStats(){
   try{
-    if(!SHEETS_URL || !API_KEY){ alert("Chưa cấu hình SHEETS_URL / API_KEY"); return; }
-    const url=SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`;
-    const res=await fetch(url); const data=await res.json();
-    if(!data.ok){ el('statsBox').textContent='Không lấy được thống kê.'; return; }
-    const v=(n)=> (n||0).toLocaleString('vi-VN');
-    const byStaff=(data.byStaff||[]).map((s,i)=> `${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>') || '—';
-    el('statsBox').innerHTML = `
-      <div><b>Hôm nay:</b> ${v(data.today.revenue)}đ (${data.today.stars} sao)</div>
+    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
+    const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`); const data=await res.json();
+    if(!data.ok){el('statsBox').textContent='Không lấy được thống kê.';return;}
+    const v=n=>(n||0).toLocaleString('vi-VN');
+    const byStaff=(data.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
+    el('statsBox').innerHTML = `<div><b>Hôm nay:</b> ${v(data.today.revenue)}đ (${data.today.stars} sao)</div>
       <div><b>Tháng này:</b> ${v(data.month.revenue)}đ (${data.month.stars} sao)</div>
-      <div style="margin-top:6px"><b>Top nhân viên:</b><br>${byStaff}</div>
-    `;
-  }catch(err){ el('statsBox').textContent='Lỗi: '+err; }
+      <div style="margin-top:6px"><b>Top nô lệ:</b><br>${byStaff}</div>`;
+  }catch(err){el('statsBox').textContent='Lỗi: '+err;}
 }
 
-/* ====== INIT & EVENTS ====== */
-loadSelectors(); loadPriceTable();
-setState("from",{ti:idxTier("Kim Cương"),di:3,st:0});
-setState("to",{ti:idxTier("Kim Cương"),di:1,st:0});
-calc();
-["fromTier","toTier"].forEach(id=>el(id).addEventListener("change",e=>{renderInputs(id.replace("Tier","")); calc();}));
-el("calc").addEventListener("click",calc);
-el("swap").addEventListener("click",swap);
-el("resetPrice").addEventListener("click",()=>{prices={...DEFAULT_PRICES}; loadPriceTable(); calc();});
-el("carry").addEventListener("change",calc);
-el("compactToggle").addEventListener("change", (e)=> document.body.classList.toggle("compact", e.target.checked));
+/* ====== INIT ====== */
+function updateSlider(){const max=Math.max(document.body.scrollHeight-window.innerHeight,1); el('scrollSlider').value=Math.round(window.scrollY/max*100);}
+el('scrollSlider').addEventListener('input',e=>{const max=Math.max(document.body.scrollHeight-window.innerHeight,1); const y=Math.round(max*(Number(e.target.value)||0)/100); window.scrollTo({top:y,behavior:'instant'});});
+window.addEventListener('scroll',updateSlider,{passive:true}); window.addEventListener('resize',updateSlider);
 
-/* Thanh trượt cuộn trang: slider ↔ scroll */
-const slider=el('scrollSlider');
-function updateSlider(){ const max=Math.max(document.body.scrollHeight - window.innerHeight, 1); slider.value = Math.round(window.scrollY / max * 100); }
-window.addEventListener('scroll', updateSlider, {passive:true});
-window.addEventListener('resize', updateSlider);
-slider.addEventListener('input', (e)=> {
-  const max=Math.max(document.body.scrollHeight - window.innerHeight, 1);
-  const y = Math.round(max * (Number(e.target.value)||0) / 100);
-  window.scrollTo({ top:y, behavior:'instant' });
-});
-updateSlider();
+function init(){
+  // selectors + price table
+  el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
+  renderInputs("from"); renderInputs("to"); loadPriceTable();
+  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
+  if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
+  if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
+  calc(); calcSlotNow();
+  ["fromTier","toTier"].forEach(id=>el(id).addEventListener("change",e=>{renderInputs(id.replace("Tier","")); calc();}));
+  el("calc").addEventListener("click",calc);
+  el("swap").addEventListener("click",swap);
+  el("resetPrice").addEventListener("click",()=>{prices={...DEFAULT_PRICES}; loadPriceTable(); calc();});
+  el("carry").addEventListener("change",calc);
+  el("compactToggle").addEventListener("change",(e)=>document.body.classList.toggle("compact",e.target.checked));
+  updateSlider();
+}
+init();
 </script>
 </body>
 </html>
