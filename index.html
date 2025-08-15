@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,48 +10,62 @@
     body{
       margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background: linear-gradient(160deg, #0b1020, #111827 45%, #0b1020); color:var(--fg);
-      display:flex; align-items:center; justify-content:center; padding:20px;
+      display:flex; align-items:center; justify-content:center; padding:16px;
     }
     .wrap{max-width:980px; width:100%;}
     .card{
-      background:rgba(17,24,39,.8);
-      border:1px solid var(--border); border-radius:18px; padding:20px; box-shadow: 0 15px 40px rgba(0,0,0,.35);
+      background:rgba(17,24,39,.9);
+      border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow: 0 15px 40px rgba(0,0,0,.35);
       backdrop-filter: blur(6px);
     }
-    h1{margin:0 0 10px 0; font-size: clamp(20px, 3vw, 28px); letter-spacing:.2px}
-    p.lead{margin:0 0 16px 0; color:var(--muted); font-size:14px}
-    .grid{display:grid; grid-template-columns: repeat(6, 1fr); gap:12px; margin-top:16px}
-    .col-3{grid-column: span 3}
+    h1{margin:0 0 8px 0; font-size: clamp(18px, 3.6vw, 28px); letter-spacing:.2px}
+    p.lead{margin:0 0 12px 0; color:var(--muted); font-size:14px; line-height:1.4}
+    .grid{display:grid; grid-template-columns: repeat(6, 1fr); gap:12px; margin-top:12px}
     .col-2{grid-column: span 2}
+    .col-3{grid-column: span 3}
     .col-4{grid-column: span 4}
     .col-6{grid-column: span 6}
-    .pane{background:#0b1220; border:1px solid var(--border); border-radius:14px; padding:14px}
+    .pane{background:#0b1220; border:1px solid var(--border); border-radius:14px; padding:12px}
     label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
     select, input[type="number"]{
-      width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#0e1627; color:var(--fg);
-      font-size:14px; outline:none;
+      width:100%; padding:12px 12px; border-radius:10px; border:1px solid var(--border); background:#0e1627; color:var(--fg);
+      font-size:15px; outline:none; min-height:44px;
     }
-    .inline{display:flex; align-items:center; gap:8px}
+    .controls{display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:8px}
+    .inline{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
     .btn{
       cursor:pointer; border:1px solid #2a3446; background:#0e1627; color:var(--fg);
-      padding:10px 14px; border-radius:12px; font-weight:600;
+      padding:12px 14px; border-radius:12px; font-weight:700; min-height:44px;
     }
     .btn.primary{background:var(--acc); border-color:#16a34a; color:#052e16}
     .stat{
       background:linear-gradient(180deg, #0a1426, #0c1220); border:1px dashed #22304a; border-radius:14px; padding:14px
     }
-    .big{font-size: clamp(22px, 4vw, 36px); font-weight:800}
+    .big{font-size: clamp(20px, 5vw, 36px); font-weight:800}
     .muted{color:var(--muted)}
-    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:14px}
+    .table-wrap{width:100%; overflow-x:auto; border-radius:10px}
+    table{width:100%; border-collapse:collapse; font-size:14px; min-width:560px}
     th, td{border-bottom:1px solid #1f2937; padding:8px 6px; text-align:left}
-    code.inline{background:#111827; padding:2px 6px; border-radius:6px; border:1px solid #1f2937}
-    .price-edit{width:90px}
-    .footer{margin-top:12px; font-size:12px; color:#9ca3af}
+    .price-edit{width:110px}
+    .footer{margin-top:10px; font-size:12px; color:#9ca3af}
     .note{font-size:12px; color:#c7d2fe}
     .pill{display:inline-block; padding:2px 8px; border:1px solid #334155; border-radius:999px; font-size:12px; color:#cbd5e1}
     .ct-badge{font-size:12px; color:#fde68a}
     .warn{font-size:12px; color:var(--warn); margin-top:6px}
-    @media (max-width: 860px){ .grid{grid-template-columns: 1fr 1fr;}.col-3,.col-2,.col-4,.col-6{grid-column: span 2;} }
+    /* Tablet: 1024↓ => 2 cột chính */
+    @media (max-width: 1024px){
+      .grid{grid-template-columns: 1fr 1fr;}
+      .col-2,.col-3,.col-4,.col-6{grid-column: span 2;}
+    }
+    /* Mobile: 640↓ => 1 cột, controls xếp dọc, nút bấm to */
+    @media (max-width: 640px){
+      body{padding:10px}
+      .grid{grid-template-columns: 1fr;}
+      .col-2,.col-3,.col-4,.col-6{grid-column: span 1;}
+      .controls{grid-template-columns:1fr; gap:8px}
+      .pane{padding:10px}
+      .btn{width:100%}
+    }
   </style>
 </head>
 <body>
@@ -66,7 +79,7 @@
       <div class="grid">
         <div class="pane col-3">
           <label>Rank hiện tại</label>
-          <div class="grid" style="grid-template-columns:1.2fr .8fr .8fr; gap:8px">
+          <div class="controls">
             <select id="fromTier"></select>
             <div id="fromDivWrap"></div>
             <div id="fromStarsWrap"></div>
@@ -76,7 +89,7 @@
 
         <div class="pane col-3">
           <label>Rank mục tiêu</label>
-          <div class="grid" style="grid-template-columns:1.2fr .8fr .8fr; gap:8px">
+          <div class="controls">
             <select id="toTier"></select>
             <div id="toDivWrap"></div>
             <div id="toStarsWrap"></div>
@@ -84,13 +97,17 @@
           <div id="toWarn" class="warn" style="display:none">Chiến tướng phải ≥ 50 sao.</div>
         </div>
 
-        <div class="pane col-6 inline" style="justify-content:space-between">
-          <div class="inline">
-            <input id="carry" type="checkbox" checked/>
-            <label for="carry" style="margin:0">Cộng 1 sao khi thăng hạng <span class="pill">VD KC3 → KC1 = 9 sao</span></label>
+        <div class="pane col-6">
+          <div class="inline" id="actionRow" style="justify-content:space-between">
+            <div class="inline">
+              <input id="carry" type="checkbox" checked style="width:20px; height:20px;"/>
+              <label for="carry" style="margin:0">Cộng 1 sao khi thăng hạng <span class="pill">VD KC3 → KC1 = 9 sao</span></label>
+            </div>
+            <div class="inline" style="gap:8px">
+              <button class="btn" id="swap">Đổi chỗ (↑↓)</button>
+              <button class="btn primary" id="calc">Tính ngay</button>
+            </div>
           </div>
-          <button class="btn" id="swap">Đổi chỗ (↑↓)</button>
-          <button class="btn primary" id="calc">Tính ngay</button>
         </div>
 
         <div class="pane col-4 stat">
@@ -110,18 +127,22 @@
             </div>
             <button class="btn" id="resetPrice">Khôi phục mặc định</button>
           </div>
-          <table>
-            <thead><tr><th>Bậc rank</th><th>Giá (đ / 1 sao)</th></tr></thead>
-            <tbody id="priceTable"></tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Bậc rank</th><th>Giá (đ / 1 sao)</th></tr></thead>
+              <tbody id="priceTable"></tbody>
+            </table>
+          </div>
         </div>
 
         <div class="pane col-6">
           <b>Chi tiết tính toán</b>
-          <table>
-            <thead><tr><th>Khoảng</th><th>Số sao</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
-            <tbody id="breakdown"></tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Khoảng</th><th>Số sao</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+              <tbody id="breakdown"></tbody>
+            </table>
+          </div>
           <div class="footer">Mặc định: mỗi division (5→1) có 5 sao. <b>Chiến tướng:</b> dùng tổng sao (≥ 50); có thể nhập tuỳ ý.</div>
         </div>
       </div>
@@ -149,7 +170,7 @@ const DEFAULT_PRICES = {
   "Chiến tướng": 15000
 };
 
-const CT_MIN = 50; // yêu cầu của bạn: CT phải >= 50
+const CT_MIN = 50; // CT phải >= 50
 
 // ---------- STATE ----------
 let prices = {...DEFAULT_PRICES};
