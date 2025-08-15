@@ -103,12 +103,11 @@
           <b>Thông tin đơn Cày rank</b>
           <div class="controls-3">
             <input id="rankStaff" type="text" placeholder="Nô lệ">
-            <input id="rankCustomer" type="text" placeholder="Thượng Đế (tên/SDT)">
+            <input id="rankCustomer" type="text" placeholder="Thượng đế (tên/SDT)">
             <input id="rankNote" type="text" placeholder="Ghi chú (tướng, yêu cầu…)">
           </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
             <button class="btn" onclick="saveOrder()">💾 Lưu đơn Cày rank</button>
-            <button class="btn" onclick="fetchStats()">📊 Lấy thống kê (Sheets – rank + slot)</button>
             <span id="saveMsg" class="muted"></span>
           </div>
         </div>
@@ -147,7 +146,7 @@
           </div>
           <div class="controls-3" style="margin-top:8px">
             <input id="slotStaff" type="text" placeholder="Nô lệ (slot)">
-            <input id="slotCustomer" type="text" placeholder="Thượng Đế (slot)">
+            <input id="slotCustomer" type="text" placeholder="Thượng đế (slot)">
             <input id="slotNote" type="text" placeholder="Ghi chú (slot)">
           </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
@@ -156,29 +155,24 @@
           </div>
         </div>
 
-        <!-- ===== DOANH THU TỔNG: ĐƠN HIỆN TẠI ===== -->
+        <!-- ===== DOANH THU THÁNG (SHEETS) ===== -->
         <div class="pane col-6">
-          <b>Doanh thu tổng (đơn hiện tại)</b>
-          <div class="table-wrap" style="margin-top:8px">
-            <table>
-              <thead><tr><th>Hạng mục</th><th>Số tiền (VND)</th></tr></thead>
-              <tbody>
-                <tr><td>Cày rank</td><td id="grandRank">0</td></tr>
-                <tr><td>Thuê slot</td><td id="grandSlot">0</td></tr>
-                <tr><td><b>TỔNG</b></td><td><b id="grandTotal">0</b></td></tr>
-              </tbody>
-            </table>
+          <b>Doanh thu tháng (từ Sheets)</b>
+          <div class="stat" style="margin-top:8px">
+            <div class="muted">Tổng doanh thu tháng này</div>
+            <div id="monthMoney" class="big">0</div>
+            <div class="muted">Tổng sao tháng này: <span id="monthStars">0</span></div>
           </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
-            <button class="btn" id="calcGrand">📌 Thống kê doanh thu tổng (đơn hiện tại)</button>
-            <span class="muted">* Cộng tiền cày rank + tiền thuê slot đang nhập.</span>
+            <button class="btn" id="fetchMonthly">📅 Lấy doanh thu tháng</button>
           </div>
         </div>
 
-        <!-- ===== THỐNG KÊ TỔNG TỪ SHEETS ===== -->
+        <!-- ===== THỐNG KÊ CHI TIẾT TỪ SHEETS ===== -->
         <div class="pane col-6" id="statsPane">
-          <b>Thống kê doanh thu (Sheets)</b>
-          <div id="statsBox" class="muted" style="margin-top:8px">Chưa tải thống kê.</div>
+          <b>Thống kê (Sheets)</b>
+          <div id="statsBox" class="muted" style="margin-top:8px">Bấm “Lấy doanh thu tháng” để tải dữ liệu, hoặc dùng khối này nếu muốn xem thêm Today & Top nô lệ:</div>
+          <div class="inline" style="margin-top:10px"><button class="btn" onclick="fetchStats()">📊 Lấy thống kê đầy đủ</button></div>
         </div>
       </div>
     </div>
@@ -194,8 +188,8 @@ const API_KEY    = 'abc123';                    // trùng với Apps Script
 
 /* ====== NGƯỠNG SAO ====== */
 const CTU_MIN=1,  CTU_MAX=9;   // Cao thủ
-the DCT_MIN=10, DCT_MAX=49;  // Đại cao thủ
-const CT_MIN=50, CT_MAX=150;  // Chiến tướng (đặt max nếu muốn)
+const DCT_MIN=10, DCT_MAX=49;  // Đại cao thủ
+const CT_MIN=50, CT_MAX=150;   // Chiến tướng
 
 const DIVS=[5,4,3,2,1],MAX_STARS=5,TIERS=["Kim Cương","Tinh Anh","Cao thủ","Đại cao thủ","Chiến tướng"];
 const DEFAULT_PRICES={"Kim Cương":3000,"Tinh Anh":5000,"Cao thủ":7000,"Đại cao thủ":10000,"Chiến tướng":15000};
@@ -279,24 +273,17 @@ function labelOf(s){ const n=TIERS[s.ti]; if(s.ti<=idxTier("Tinh Anh")) return `
 /* ==== MAIN CALC ==== */
 function calc(){
   const from=getState("from"), to=getState("to"), carry=el("carry").checked, bd=el("breakdown"); bd.innerHTML="";
-  if(notLT(from,to)){ el("starsTotal").textContent="0"; el("priceTotal").textContent="0"; bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; calcGrandTotal(); return; }
+  if(notLT(from,to)){ el("starsTotal").textContent="0"; el("priceTotal").textContent="0"; bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return; }
   let starsTotal=0, priceTotal=0;
   for(const seg of starPath(from,to,carry)){ starsTotal+=seg.stars; const m=seg.stars*seg.pricePerStar; priceTotal+=m; bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(m)}</b></td></tr>`; }
   el("starsTotal").textContent=fmt(starsTotal); el("priceTotal").textContent=fmt(priceTotal);
-  calcGrandTotal();
 }
 function swap(){const a=getState("from"), b=getState("to"); setState("from",b); setState("to",a); calc();}
 
 /* ====== SLOT (TÁCH RIÊNG) ====== */
-function calcSlotNow(){ const h=Math.max(0,Number(el('slotHours').value||0)); const rate=Math.max(0,Number(el('slotRate').value||0)); el('slotMoney').textContent=fmt(Math.round(h*rate)); calcGrandTotal(); }
+function calcSlotNow(){ const h=Math.max(0,Number(el('slotHours').value||0)); const rate=Math.max(0,Number(el('slotRate').value||0)); el('slotMoney').textContent=fmt(Math.round(h*rate)); }
 document.getElementById('calcSlot').addEventListener('click',calcSlotNow);
 ['slotHours','slotRate'].forEach(id=>el(id).addEventListener('input',calcSlotNow));
-
-/* ====== GRAND TOTAL (đơn hiện tại) ====== */
-function numFromText(id){const t=el(id).textContent||"0"; return parseInt(t.replace(/\D/g,''))||0;}
-function setText(id,val){el(id).textContent=(val||0).toLocaleString('vi-VN');}
-function calcGrandTotal(){ const rank=numFromText('priceTotal'); const slot=numFromText('slotMoney'); setText('grandRank',rank); setText('grandSlot',slot); setText('grandTotal',rank+slot); }
-document.getElementById('calcGrand').addEventListener('click',calcGrandTotal);
 
 /* ====== SHEETS SAVE & STATS ====== */
 function snapshotRank(){
@@ -321,11 +308,25 @@ async function saveSlot(){
     const t=await res.text(); let d={}; try{d=JSON.parse(t)}catch{d={ok:false,error:t}}; el("saveMsg").textContent=d.ok?"✅ Đã lưu đơn Thuê slot.":"❌ "+(d.error||"Lỗi");
   }catch(err){ el("saveMsg").textContent="❌ Lỗi mạng: "+err; }
 }
+
+/* ——— Doanh thu tháng (từ Sheets): dùng month.revenue & month.stars ——— */
+async function fetchMonthly(){
+  try{
+    const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`);
+    const d=await res.json();
+    if(!d.ok) { alert('Không lấy được doanh thu tháng'); return; }
+    el('monthMoney').textContent = (d.month.revenue||0).toLocaleString('vi-VN');
+    el('monthStars').textContent = (d.month.stars||0).toLocaleString('vi-VN');
+  }catch(err){ alert('Lỗi: '+err); }
+}
+
+/* ——— Thống kê đầy đủ (tùy chọn) ——— */
 async function fetchStats(){
   try{
     const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`); const d=await res.json();
     if(!d.ok){ el('statsBox').textContent='Không lấy được thống kê.'; return; }
-    const v=n=>(n||0).toLocaleString('vi-VN'); const byStaff=(d.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
+    const v=n=>(n||0).toLocaleString('vi-VN');
+    const byStaff=(d.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
     el('statsBox').innerHTML=`<div><b>Hôm nay:</b> ${v(d.today.revenue)}đ (${d.today.stars} sao)</div><div><b>Tháng này:</b> ${v(d.month.revenue)}đ (${d.month.stars} sao)</div><div style="margin-top:6px"><b>Top nô lệ:</b><br>${byStaff}</div>`;
   }catch(err){ el('statsBox').textContent='Lỗi: '+err; }
 }
@@ -337,16 +338,18 @@ window.addEventListener('scroll',updateSlider,{passive:true}); window.addEventLi
 
 function init(){
   el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
+  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương";
   renderInputs("from"); renderInputs("to");
-  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
   if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
   if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
-  loadPriceTable(); calc(); calcSlotNow(); calcGrandTotal();
+  loadPriceTable(); calc(); calcSlotNow();
   ["fromTier","toTier"].forEach(id=>el(id).addEventListener("change",e=>{renderInputs(id.replace("Tier","")); calc();}));
   el("calc").addEventListener("click",calc); el("swap").addEventListener("click",swap);
   el("resetPrice").addEventListener("click",()=>{prices={...DEFAULT_PRICES}; loadPriceTable(); calc();});
   el("carry").addEventListener("change",calc);
   el("compactToggle").addEventListener("change",(e)=>document.body.classList.toggle("compact",e.target.checked));
+
+  document.getElementById('fetchMonthly').addEventListener('click', fetchMonthly);
   updateSlider();
 }
 init();
