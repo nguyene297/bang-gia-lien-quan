@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cày Rank + Thuê Slot (Sheets)</title>
+<title>Cày Rank & Thuê Slot (Sheets)</title>
 <style>
   *,*::before,*::after{box-sizing:border-box}
   :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--fg:#e5e7eb;--acc:#22c55e;--border:#1f2937;--warn:#f59e0b;
@@ -50,8 +50,8 @@
         <span class="inline" style="gap:12px">
           <span>Tính cày rank & thuê slot (tách riêng). Lưu đơn vào Google Sheets.</span>
           <label class="inline" style="gap:6px;cursor:pointer"><input id="compactToggle" type="checkbox"/><span class="pill">Chế độ gọn (mobile)</span></label>
-        </span>
-        <br><span class="ct-badge">Từ <b>Cao thủ</b> nhập tổng sao: CT 1–9 • ĐCT 10–49 • CTướng ≥50.</span>
+        </span><br>
+        <span class="ct-badge">Từ <b>Cao thủ</b> nhập tổng sao: CT 1–9 • ĐCT 10–49 • CTướng ≥50.</span>
       </p>
 
       <div class="grid">
@@ -98,6 +98,21 @@
           <div id="priceTotal" class="big">0</div>
         </div>
 
+        <!-- Thông tin & nút LƯU của Cày rank -->
+        <div class="pane col-6">
+          <b>Thông tin đơn Cày rank</b>
+          <div class="controls-3">
+            <input id="rankStaff" type="text" placeholder="Nhân viên">
+            <input id="rankCustomer" type="text" placeholder="Khách hàng (tên/SDT)">
+            <input id="rankNote" type="text" placeholder="Ghi chú (tướng, yêu cầu…)">
+          </div>
+          <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="saveOrder()">💾 Lưu đơn Cày rank</button>
+            <button class="btn" onclick="fetchStats()">📊 Lấy thống kê</button>
+            <span id="saveMsg" class="muted"></span>
+          </div>
+        </div>
+
         <div class="pane col-6">
           <div class="inline" style="justify-content:space-between">
             <div><b>Bảng giá cày rank</b><div class="note">Chỉnh đơn giá (đ/sao) theo bậc.</div></div>
@@ -130,28 +145,18 @@
             <div><label>Giá / giờ (đ)</label><input id="slotRate" type="number" min="0" step="1000" value="30000"></div>
             <div class="stat"><div class="muted">Tiền thuê slot</div><div id="slotMoney" class="big">0</div></div>
           </div>
+          <div class="controls-3" style="margin-top:8px">
+            <input id="slotStaff" type="text" placeholder="Nhân viên (slot)">
+            <input id="slotCustomer" type="text" placeholder="Khách hàng (slot)">
+            <input id="slotNote" type="text" placeholder="Ghi chú (slot)">
+          </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
             <button class="btn" id="calcSlot">Tính thuê slot</button>
             <button class="btn" onclick="saveSlot()">💾 Lưu đơn Thuê slot</button>
-            <span class="muted">* Không cộng vào tiền cày rank</span>
           </div>
         </div>
 
-        <!-- ===== THÔNG TIN ĐƠN / THỐNG KÊ ===== -->
-        <div class="pane col-6">
-          <b>Thông tin chung</b>
-          <div class="controls-3">
-            <input id="staff" type="text" placeholder="Nô lệ">
-            <input id="customer" type="text" placeholder="Thượng đế (tên/SDT)">
-            <input id="note" type="text" placeholder="Ghi chú (tướng, yêu cầu…)">
-          </div>
-          <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
-            <button class="btn" onclick="saveOrder()">💾 Lưu đơn Cày rank</button>
-            <button class="btn" onclick="fetchStats()">📊 Lấy thống kê</button>
-            <span id="saveMsg" class="muted"></span>
-          </div>
-        </div>
-
+        <!-- ===== THỐNG KÊ ===== -->
         <div class="pane col-6" id="statsPane">
           <b>Thống kê doanh thu</b>
           <div id="statsBox" class="muted" style="margin-top:8px">Chưa tải thống kê.</div>
@@ -165,13 +170,13 @@
 
 <script>
 /* ====== GOOGLE SHEETS CONFIG ====== */
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec';   // <- dán URL /exec của bạn
-const API_KEY    = 'abc123';                   // <- trùng với Apps Script
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec'; // ví dụ: https://script.google.com/macros/s/XXXXX/exec
+const API_KEY    = 'abc123';                    // trùng với Apps Script
 
-/* ====== THAM SỐ NGƯỠNG SAO ====== */
-const CTU_MIN=1,  CTU_MAX=9;    // Cao thủ
-const DCT_MIN=10, DCT_MAX=49;   // Đại cao thủ
-const CT_MIN=50, CT_MAX=150;    // Chiến tướng (có thể đổi)
+/* ====== NGƯỠNG SAO THEO YÊU CẦU ====== */
+const CTU_MIN=1,  CTU_MAX=9;   // Cao thủ
+const DCT_MIN=10, DCT_MAX=49;  // Đại cao thủ
+const CT_MIN=50, CT_MAX=150;   // Chiến tướng (đặt max theo ý)
 
 const DIVS=[5,4,3,2,1],MAX_STARS=5,TIERS=["Kim Cương","Tinh Anh","Cao thủ","Đại cao thủ","Chiến tướng"];
 const DEFAULT_PRICES={"Kim Cương":3000,"Tinh Anh":5000,"Cao thủ":7000,"Đại cao thủ":10000,"Chiến tướng":15000};
@@ -180,62 +185,32 @@ const el=id=>document.getElementById(id);
 const option=list=>list.map(v=>`<option value="${v}">${v}</option>`).join("");
 const idxTier=t=>TIERS.indexOf(t);
 function fmt(n){try{return n.toLocaleString("vi-VN")}catch{return String(n)}}
-
-/* ==== UI parts for inputs ==== */
 function mkDiv(id){return `<select id="${id}">${option(DIVS)}</select>`}
 function mkStar(id){return `<select id="${id}">${option([0,1,2,3,4])}</select>`}
 function mkAbs(id,min,max,ph){return `<input id="${id}" type="number" min="${min}" ${max?`max="${max}"`:""} step="1" placeholder="${ph}" value="${min}"/>`}
-
-function warnText(tier){
-  if(tier==="Cao thủ") return `Nhập tổng sao ${CTU_MIN}–${CTU_MAX}.`;
-  if(tier==="Đại cao thủ") return `Nhập tổng sao ${DCT_MIN}–${DCT_MAX}.`;
-  if(tier==="Chiến tướng") return `Nhập tổng sao ≥ ${CT_MIN}.`;
-  return "";
-}
+function warnText(tier){ if(tier==="Cao thủ") return `Nhập tổng sao ${CTU_MIN}–${CTU_MAX}.`; if(tier==="Đại cao thủ") return `Nhập tổng sao ${DCT_MIN}–${DCT_MAX}.`; if(tier==="Chiến tướng") return `Nhập tổng sao ≥ ${CT_MIN}.`; return ""; }
 
 /* ==== Render inputs per tier ==== */
 function renderInputs(prefix){
   const tier=el(prefix+"Tier").value,divW=el(prefix+"DivWrap"),starW=el(prefix+"StarsWrap"),warn=el(prefix+"Warn");
-  if(tier==="Kim Cương" || tier==="Tinh Anh"){
-    divW.innerHTML=mkDiv(prefix+"Div");
-    starW.innerHTML=mkStar(prefix+"Stars");
-    if(warn){warn.style.display="none"; warn.textContent="";}
-  }else if(tier==="Cao thủ"){
-    divW.innerHTML=mkAbs(prefix+"ABS", CTU_MIN, CTU_MAX, `${CTU_MIN}–${CTU_MAX} sao`);
-    starW.innerHTML="";
-    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
-  }else if(tier==="Đại cao thủ"){
-    divW.innerHTML=mkAbs(prefix+"ABS", DCT_MIN, DCT_MAX, `${DCT_MIN}–${DCT_MAX} sao`);
-    starW.innerHTML="";
-    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
-  }else{ // Chiến tướng
-    divW.innerHTML=mkAbs(prefix+"ABS", CT_MIN, CT_MAX, `≥ ${CT_MIN} sao`);
-    starW.innerHTML="";
-    if(warn){warn.style.display="block"; warn.textContent=warnText(tier);}
-  }
+  if(tier==="Kim Cương"||tier==="Tinh Anh"){ divW.innerHTML=mkDiv(prefix+"Div"); starW.innerHTML=mkStar(prefix+"Stars"); if(warn){warn.style.display="none";warn.textContent="";} }
+  else if(tier==="Cao thủ"){ divW.innerHTML=mkAbs(prefix+"ABS",CTU_MIN,CTU_MAX,`${CTU_MIN}–${CTU_MAX} sao`); starW.innerHTML=""; if(warn){warn.style.display="block";warn.textContent=warnText(tier);} }
+  else if(tier==="Đại cao thủ"){ divW.innerHTML=mkAbs(prefix+"ABS",DCT_MIN,DCT_MAX,`${DCT_MIN}–${DCT_MAX} sao`); starW.innerHTML=""; if(warn){warn.style.display="block";warn.textContent=warnText(tier);} }
+  else{ divW.innerHTML=mkAbs(prefix+"ABS",CT_MIN,CT_MAX,`≥ ${CT_MIN} sao`); starW.innerHTML=""; if(warn){warn.style.display="block";warn.textContent=warnText(tier);} }
   ["Div","Stars","ABS"].forEach(s=>{const n=document.getElementById(prefix+s); if(n) n.addEventListener("change",calc);});
 }
 
 function loadSelectors(){
-  el("fromTier").innerHTML=option(TIERS);
-  el("toTier").innerHTML=option(TIERS);
-  ["from","to"].forEach(renderInputs);
-  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương";
-  renderInputs("from"); renderInputs("to");
+  el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
+  el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
   if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
   if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
 }
-
-function loadPriceTable(){
-  const tb=el("priceTable");
-  tb.innerHTML=TIERS.map(t=>`<tr><td>${t}</td><td><input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/></td></tr>`).join("");
-  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const t=e.target.dataset.tier; prices[t]=Math.max(0,Math.round(Number(e.target.value||0))); calc();}));
-}
+function loadPriceTable(){ const tb=el("priceTable"); tb.innerHTML=TIERS.map(t=>`<tr><td>${t}</td><td><input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/></td></tr>`).join(""); tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const t=e.target.dataset.tier; prices[t]=Math.max(0,Math.round(Number(e.target.value||0))); calc();}));}
 
 /* ==== State helpers ==== */
 function getABS(prefix){
-  const i=el(prefix+"ABS"); if(!i) return null;
-  let v=Number(i.value||0);
+  const i=el(prefix+"ABS"); if(!i) return null; let v=Number(i.value||0);
   const tier=el(prefix+"Tier").value;
   if(tier==="Cao thủ"){ if(v<CTU_MIN) v=CTU_MIN; if(v>CTU_MAX) v=CTU_MAX; }
   else if(tier==="Đại cao thủ"){ if(v<DCT_MIN) v=DCT_MIN; if(v>DCT_MAX) v=DCT_MAX; }
@@ -244,149 +219,88 @@ function getABS(prefix){
 }
 function getState(prefix){
   const tier=el(prefix+"Tier").value;
-  if(tier==="Kim Cương" || tier==="Tinh Anh")
-    return {ti:idxTier(tier), di:Number(el(prefix+"Div").value), st:Number(el(prefix+"Stars").value)};
+  if(tier==="Kim Cương"||tier==="Tinh Anh") return {ti:idxTier(tier), di:Number(el(prefix+"Div").value), st:Number(el(prefix+"Stars").value)};
   return {ti:idxTier(tier), abs:getABS(prefix)};
 }
-function setState(prefix,obj){
-  el(prefix+"Tier").value=TIERS[obj.ti]; renderInputs(prefix);
+function setState(prefix,obj){ el(prefix+"Tier").value=TIERS[obj.ti]; renderInputs(prefix);
   if(obj.ti<=idxTier("Tinh Anh")){ if(el(prefix+"Div")) el(prefix+"Div").value=obj.di; if(el(prefix+"Stars")) el(prefix+"Stars").value=obj.st; }
   else{ if(el(prefix+"ABS")) el(prefix+"ABS").value=obj.abs; }
 }
 
-/* ==== Ordering and stepping ==== */
+/* ==== Ordering & stepping ==== */
 function lt(a,b){
   if(a.ti!==b.ti) return a.ti<b.ti;
-  if(a.ti<=idxTier("Tinh Anh")){ // KC/TA
-    if(a.di!==b.di) return a.di>b.di;
-    return a.st<b.st;
-  }else{ // >= Cao thủ dùng abs
-    return (a.abs||0) < (b.abs||0);
-  }
+  if(a.ti<=idxTier("Tinh Anh")){ if(a.di!==b.di) return a.di>b.di; return a.st<b.st; }
+  return (a.abs||0) < (b.abs||0);
 }
 function notLT(a,b){return !lt(a,b)}
-
-/* Increase one star step */
 function stepOnce(cur,carry){
-  const last=idxTier("Chiến tướng");
   if(cur.ti<=idxTier("Tinh Anh")){
     cur.st+=1;
     if(cur.st>=MAX_STARS){
-      cur.st = carry?1:0;
-      if(cur.di>1){cur.di-=1}
-      else{
-        cur.ti += 1;
-        if(cur.ti<=idxTier("Tinh Anh")){ cur.di=5; } // vào bậc tiếp theo KC/TA
-        else{ // chuyển sang Cao thủ
-          cur.abs = Math.max(CTU_MIN, carry?CTU_MIN+1:CTU_MIN);
-          delete cur.di; delete cur.st;
-        }
-      }
+      cur.st=carry?1:0;
+      if(cur.di>1) cur.di-=1;
+      else{ cur.ti+=1; if(cur.ti<=idxTier("Tinh Anh")) cur.di=5; else {cur.abs=Math.max(CTU_MIN,carry?CTU_MIN+1:CTU_MIN); delete cur.di; delete cur.st;} }
     }
   }else{
-    // từ Cao thủ trở lên: tăng abs
     cur.abs = (cur.abs|| (cur.ti===idxTier("Cao thủ")?CTU_MIN:DCT_MIN)) + 1;
-    // đổi tier khi qua ngưỡng
-    if(cur.ti===idxTier("Cao thủ") && cur.abs>=DCT_MIN){ cur.ti=idxTier("Đại cao thủ"); }
-    if(cur.ti===idxTier("Đại cao thủ") && cur.abs>=CT_MIN){ cur.ti=idxTier("Chiến tướng"); }
+    if(cur.ti===idxTier("Cao thủ") && cur.abs>=DCT_MIN) cur.ti=idxTier("Đại cao thủ");
+    if(cur.ti===idxTier("Đại cao thủ") && cur.abs>=CT_MIN) cur.ti=idxTier("Chiến tướng");
   }
 }
-
-/* Tạo các đoạn tính tiền theo bậc */
 function* starPath(from,to,carry){
   let cur=JSON.parse(JSON.stringify(from));
   let segFrom=JSON.parse(JSON.stringify(cur)), segTier=cur.ti, stars=0;
-
-  while(lt(cur,to)){
-    stepOnce(cur,carry);
-    stars+=1;
-    if(cur.ti!==segTier){ // đổi bậc → chốt đoạn
-      yield {from:{...segFrom},to:{...cur},stars,pricePerStar:prices[TIERS[segTier]]};
-      segFrom=JSON.parse(JSON.stringify(cur)); segTier=cur.ti; stars=0;
-    }
-  }
-  if(stars>0){ yield {from:{...segFrom},to:{...to},stars,pricePerStar:prices[TIERS[segTier]]}; }
+  while(lt(cur,to)){ stepOnce(cur,carry); stars+=1; if(cur.ti!==segTier){ yield {from:{...segFrom},to:{...cur},stars,pricePerStar:prices[TIERS[segTier]]}; segFrom=JSON.parse(JSON.stringify(cur)); segTier=cur.ti; stars=0; } }
+  if(stars>0) yield {from:{...segFrom},to:{...to},stars,pricePerStar:prices[TIERS[segTier]]};
 }
-
-function labelOf(s){
-  const n=TIERS[s.ti];
-  if(s.ti<=idxTier("Tinh Anh")) return `${n} ${s.di} • ${s.st}/${MAX_STARS}`;
-  return `${n} • ${(s.abs)} sao`;
-}
+function labelOf(s){ const n=TIERS[s.ti]; if(s.ti<=idxTier("Tinh Anh")) return `${n} ${s.di} • ${s.st}/5`; return `${n} • ${s.abs} sao`; }
 
 /* ==== MAIN CALC ==== */
 function calc(){
   const from=getState("from"), to=getState("to"), carry=el("carry").checked, bd=el("breakdown"); bd.innerHTML="";
-  if(notLT(from,to)){ el("starsTotal").textContent="0"; el("priceTotal").textContent="0";
-    bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return; }
+  if(notLT(from,to)){ el("starsTotal").textContent="0"; el("priceTotal").textContent="0"; bd.innerHTML=`<tr><td colspan="4"><span class="muted">Mục tiêu phải cao hơn hiện tại.</span></td></tr>`; return; }
   let starsTotal=0, priceTotal=0;
-  for(const seg of starPath(from,to,carry)){
-    starsTotal+=seg.stars; const money=seg.stars*seg.pricePerStar; priceTotal+=money;
-    bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(money)}</b></td></tr>`;
-  }
+  for(const seg of starPath(from,to,carry)){ starsTotal+=seg.stars; const m=seg.stars*seg.pricePerStar; priceTotal+=m; bd.innerHTML+=`<tr><td>${labelOf(seg.from)} → ${labelOf(seg.to)}</td><td>${seg.stars}</td><td>${fmt(seg.pricePerStar)}</td><td><b>${fmt(m)}</b></td></tr>`; }
   el("starsTotal").textContent=fmt(starsTotal); el("priceTotal").textContent=fmt(priceTotal);
 }
 function swap(){const a=getState("from"), b=getState("to"); setState("from",b); setState("to",a); calc();}
 
 /* ====== SLOT (TÁCH RIÊNG) ====== */
-function calcSlotNow(){
-  const h = Math.max(0, Number(el('slotHours').value||0));
-  const rate = Math.max(0, Number(el('slotRate').value||0));
-  el('slotMoney').textContent = fmt(Math.round(h*rate));
-}
-el('calcSlot').addEventListener('click', calcSlotNow);
-['slotHours','slotRate'].forEach(id=> el(id).addEventListener('input', calcSlotNow));
+function calcSlotNow(){ const h=Math.max(0,Number(el('slotHours').value||0)); const rate=Math.max(0,Number(el('slotRate').value||0)); el('slotMoney').textContent=fmt(Math.round(h*rate)); }
+document.getElementById('calcSlot').addEventListener('click',calcSlotNow);
+['slotHours','slotRate'].forEach(id=>el(id).addEventListener('input',calcSlotNow));
 
 /* ====== SHEETS SAVE & STATS ====== */
-function snapshotOrder(){
-  const fromTier=el("fromTier").value, toTier=el("toTier").value;
-  let from={tier:fromTier}, to={tier:toTier};
-  if(idxTier(fromTier)<=idxTier("Tinh Anh")){ from.div=Number(el("fromDiv").value); from.starsOrCT=Number(el("fromStars").value); }
-  else{ from.starsOrCT=Number(el("fromABS").value); }
-  if(idxTier(toTier)<=idxTier("Tinh Anh")){ to.div=Number(el("toDiv").value); to.starsOrCT=Number(el("toStars").value); }
-  else{ to.starsOrCT=Number(el("toABS").value); }
-  const starsTotal=parseInt(el("starsTotal").textContent.replace(/\D/g,''))||0;
-  const priceTotal=parseInt(el("priceTotal").textContent.replace(/\D/g,''))||0;
-  return { staff:el("staff").value.trim(), customer:el("customer").value.trim(), note:el("note").value.trim(),
-           from,to, carry:el("carry").checked, starsTotal, priceTotal };
+function snapshotRank(){
+  const fromTier=el("fromTier").value, toTier=el("toTier").value; let from={tier:fromTier}, to={tier:toTier};
+  if(idxTier(fromTier)<=idxTier("Tinh Anh")){ from.div=Number(el("fromDiv").value); from.starsOrCT=Number(el("fromStars").value); } else { from.starsOrCT=Number(el("fromABS").value); }
+  if(idxTier(toTier)<=idxTier("Tinh Anh")){ to.div=Number(el("toDiv").value); to.starsOrCT=Number(el("toStars").value); } else { to.starsOrCT=Number(el("toABS").value); }
+  const starsTotal=parseInt(el("starsTotal").textContent.replace(/\D/g,''))||0; const priceTotal=parseInt(el("priceTotal").textContent.replace(/\D/g,''))||0;
+  return { staff:el("rankStaff").value.trim(), customer:el("rankCustomer").value.trim(), note:el("rankNote").value.trim(), from,to, carry:el("carry").checked, starsTotal, priceTotal };
 }
 async function saveOrder(){
   try{
-    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
-    const payload={ apiKey:API_KEY, ...snapshotOrder() };
+    const payload={ apiKey:API_KEY, ...snapshotRank() };
     const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({payload:JSON.stringify(payload)})});
-    const text=await res.text(); let data={}; try{data=JSON.parse(text)}catch{data={ok:false,error:text}}
-    el("saveMsg").textContent=data.ok?"✅ Đã lưu đơn cày rank.":("❌ Lỗi: "+(data.error||""));
-  }catch(err){el("saveMsg").textContent="❌ Lỗi mạng: "+err;}
+    const t=await res.text(); let d={}; try{d=JSON.parse(t)}catch{d={ok:false,error:t}}; el("saveMsg").textContent=d.ok?"✅ Đã lưu đơn Cày rank.":"❌ "+(d.error||"Lỗi");
+  }catch(err){ el("saveMsg").textContent="❌ Lỗi mạng: "+err; }
 }
 async function saveSlot(){
   try{
-    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
-    const h=Math.max(0,Number(el('slotHours').value||0));
-    const rate=Math.max(0,Number(el('slotRate').value||0));
-    const money=Math.round(h*rate);
-    const payload={ apiKey:API_KEY,
-      staff:el("staff").value.trim(), customer:el("customer").value.trim(),
-      note:`Thuê slot ${h} giờ @${fmt(rate)}/h`,
-      from:{tier:"Thuê slot"}, to:{tier:"Thuê slot"},
-      carry:false, starsTotal:0, priceTotal:money
-    };
+    const h=Math.max(0,Number(el('slotHours').value||0)), rate=Math.max(0,Number(el('slotRate').value||0)), money=Math.round(h*rate);
+    const payload={ apiKey:API_KEY, staff:el("slotStaff").value.trim(), customer:el("slotCustomer").value.trim(), note:(el("slotNote").value.trim()||`Thuê slot ${h}h @${fmt(rate)}/h`), from:{tier:"Thuê slot"}, to:{tier:"Thuê slot"}, carry:false, starsTotal:0, priceTotal:money };
     const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({payload:JSON.stringify(payload)})});
-    const text=await res.text(); let data={}; try{data=JSON.parse(text)}catch{data={ok:false,error:text}}
-    el("saveMsg").textContent=data.ok?"✅ Đã lưu đơn Thuê slot.":("❌ Lỗi: "+(data.error||""));
-  }catch(err){el("saveMsg").textContent="❌ Lỗi mạng: "+err;}
+    const t=await res.text(); let d={}; try{d=JSON.parse(t)}catch{d={ok:false,error:t}}; el("saveMsg").textContent=d.ok?"✅ Đã lưu đơn Thuê slot.":"❌ "+(d.error||"Lỗi");
+  }catch(err){ el("saveMsg").textContent="❌ Lỗi mạng: "+err; }
 }
 async function fetchStats(){
   try{
-    if(!SHEETS_URL||!API_KEY){alert("Chưa cấu hình SHEETS_URL/API_KEY");return;}
-    const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`); const data=await res.json();
-    if(!data.ok){el('statsBox').textContent='Không lấy được thống kê.';return;}
-    const v=n=>(n||0).toLocaleString('vi-VN');
-    const byStaff=(data.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
-    el('statsBox').innerHTML = `<div><b>Hôm nay:</b> ${v(data.today.revenue)}đ (${data.today.stars} sao)</div>
-      <div><b>Tháng này:</b> ${v(data.month.revenue)}đ (${data.month.stars} sao)</div>
-      <div style="margin-top:6px"><b>Top nô lệ:</b><br>${byStaff}</div>`;
-  }catch(err){el('statsBox').textContent='Lỗi: '+err;}
+    const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`); const d=await res.json();
+    if(!d.ok){ el('statsBox').textContent='Không lấy được thống kê.'; return; }
+    const v=n=>(n||0).toLocaleString('vi-VN'); const byStaff=(d.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
+    el('statsBox').innerHTML=`<div><b>Hôm nay:</b> ${v(d.today.revenue)}đ (${d.today.stars} sao)</div><div><b>Tháng này:</b> ${v(d.month.revenue)}đ (${d.month.stars} sao)</div><div style="margin-top:6px"><b>Top nhân viên:</b><br>${byStaff}</div>`;
+  }catch(err){ el('statsBox').textContent='Lỗi: '+err; }
 }
 
 /* ====== INIT ====== */
@@ -395,16 +309,14 @@ el('scrollSlider').addEventListener('input',e=>{const max=Math.max(document.body
 window.addEventListener('scroll',updateSlider,{passive:true}); window.addEventListener('resize',updateSlider);
 
 function init(){
-  // selectors + price table
   el("fromTier").innerHTML=option(TIERS); el("toTier").innerHTML=option(TIERS);
-  renderInputs("from"); renderInputs("to"); loadPriceTable();
+  renderInputs("from"); renderInputs("to");
   el("fromTier").value="Kim Cương"; el("toTier").value="Kim Cương"; renderInputs("from"); renderInputs("to");
   if(el("fromDiv")) el("fromDiv").value=3; if(el("fromStars")) el("fromStars").value=0;
   if(el("toDiv")) el("toDiv").value=1; if(el("toStars")) el("toStars").value=0;
-  calc(); calcSlotNow();
+  loadPriceTable(); calc(); calcSlotNow();
   ["fromTier","toTier"].forEach(id=>el(id).addEventListener("change",e=>{renderInputs(id.replace("Tier","")); calc();}));
-  el("calc").addEventListener("click",calc);
-  el("swap").addEventListener("click",swap);
+  el("calc").addEventListener("click",calc); el("swap").addEventListener("click",swap);
   el("resetPrice").addEventListener("click",()=>{prices={...DEFAULT_PRICES}; loadPriceTable(); calc();});
   el("carry").addEventListener("change",calc);
   el("compactToggle").addEventListener("change",(e)=>document.body.classList.toggle("compact",e.target.checked));
