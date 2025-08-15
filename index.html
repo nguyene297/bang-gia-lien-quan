@@ -102,8 +102,8 @@
         <div class="pane col-6">
           <b>Thông tin đơn Cày rank</b>
           <div class="controls-3">
-            <input id="rankStaff" type="text" placeholder="Nhân viên">
-            <input id="rankCustomer" type="text" placeholder="Khách hàng (tên/SDT)">
+            <input id="rankStaff" type="text" placeholder="Nô lệ">
+            <input id="rankCustomer" type="text" placeholder="Thượng đế (tên/SDT)">
             <input id="rankNote" type="text" placeholder="Ghi chú (tướng, yêu cầu…)">
           </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
@@ -146,8 +146,8 @@
             <div class="stat"><div class="muted">Tiền thuê slot</div><div id="slotMoney" class="big">0</div></div>
           </div>
           <div class="controls-3" style="margin-top:8px">
-            <input id="slotStaff" type="text" placeholder="Nhân viên (slot)">
-            <input id="slotCustomer" type="text" placeholder="Khách hàng (slot)">
+            <input id="slotStaff" type="text" placeholder="Nô lệ (slot)">
+            <input id="slotCustomer" type="text" placeholder="Thượng đế (SDT)">
             <input id="slotNote" type="text" placeholder="Ghi chú (slot)">
           </div>
           <div class="inline" style="margin-top:10px;gap:8px;flex-wrap:wrap">
@@ -299,7 +299,7 @@ async function fetchStats(){
     const res=await fetch(SHEETS_URL+`?q=stats&apiKey=${encodeURIComponent(API_KEY)}`); const d=await res.json();
     if(!d.ok){ el('statsBox').textContent='Không lấy được thống kê.'; return; }
     const v=n=>(n||0).toLocaleString('vi-VN'); const byStaff=(d.byStaff||[]).map((s,i)=>`${i+1}. ${s.staff}: ${v(s.revenue)}đ (${s.stars} sao)`).join('<br>')||'—';
-    el('statsBox').innerHTML=`<div><b>Hôm nay:</b> ${v(d.today.revenue)}đ (${d.today.stars} sao)</div><div><b>Tháng này:</b> ${v(d.month.revenue)}đ (${d.month.stars} sao)</div><div style="margin-top:6px"><b>Top nhân viên:</b><br>${byStaff}</div>`;
+    el('statsBox').innerHTML=`<div><b>Hôm nay:</b> ${v(d.today.revenue)}đ (${d.today.stars} sao)</div><div><b>Tháng này:</b> ${v(d.month.revenue)}đ (${d.month.stars} sao)</div><div style="margin-top:6px"><b>Top nô lệ:</b><br>${byStaff}</div>`;
   }catch(err){ el('statsBox').textContent='Lỗi: '+err; }
 }
 
