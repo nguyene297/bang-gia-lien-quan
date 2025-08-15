@@ -11,18 +11,15 @@
     --acc:#22c55e;--border:#1f2937;--warn:#f59e0b;
     --fs-base:15px; --pad:12px; --btn-pad:12px; --minh:44px; --big:36px;
   }
-  /* Chế độ gọn ~20% */
   body.compact{ --fs-base:13px; --pad:8px; --btn-pad:9px; --minh:36px; --big:30px; }
-
   html,body{height:100%}
   body{
     margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
     background:linear-gradient(160deg,#0b1020,#111827 45%,#0b1020); color:var(--fg);
-    /* BỎ căn giữa để tránh che mất phần đầu trên mobile */
     display:block; overflow-x:hidden;
   }
   .wrap{max-width:980px; width:100%; margin:16px auto; padding:0 12px;}
-  .card{background:rgba(17,24,39,.9); border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 15px 40px rgba(0,0,0,.35); backdrop-filter:blur(6px)}
+  .card{background:rgba(17,24,39,.9); border:1px solid var(--border); border-radius:18px; padding:16px; box-shadow:0 15px 40px rgba(0,0,0,.35)}
   h1{margin:0 0 8px 0; font-size:clamp(18px,3.6vw,28px)}
   p.lead{margin:0 0 12px 0; color:var(--muted); font-size:14px; line-height:1.4}
   .grid{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:12px}
@@ -50,13 +47,7 @@
   .pill{display:inline-block; padding:2px 8px; border:1px solid #334155; border-radius:999px; font-size:12px; color:#cbd5e1}
   .ct-badge{font-size:12px; color:#fde68a}
   .warn{font-size:12px; color:var(--warn); margin-top:6px}
-
-  /* Tablet ≤1024px: 2 cột */
-  @media (max-width:1024px){
-    .grid{grid-template-columns:1fr 1fr}
-    .col-2,.col-3,.col-4,.col-6{grid-column:span 2}
-  }
-  /* Mobile ≤640px: 1 cột + nút xếp dọc */
+  @media (max-width:1024px){ .grid{grid-template-columns:1fr 1fr} .col-2,.col-3,.col-4,.col-6{grid-column:span 2} }
   @media (max-width:640px){
     .grid{grid-template-columns:1fr}
     .col-2,.col-3,.col-4,.col-6{grid-column:span 1}
@@ -66,7 +57,6 @@
     #actionRow .inline:last-child{width:100%}
     .btn{width:100%}
   }
-
   /* Thanh trượt cuộn trang */
   #scrollBarWrap{
     position:fixed; left:0; right:0; bottom:0; padding:6px 10px;
@@ -162,8 +152,8 @@
         <div class="pane col-6">
           <b>Thông tin đơn hàng</b>
           <div class="controls" style="grid-template-columns:1fr 1fr 1fr">
-            <input id="staff" type="text" placeholder="Nô lệ" />
-            <input id="customer" type="text" placeholder="Thượng đế" />
+            <input id="staff" type="text" placeholder="Nhân viên" />
+            <input id="customer" type="text" placeholder="Khách hàng (tên/ID)" />
             <input id="note" type="text" placeholder="Ghi chú (tướng, yêu cầu…)" />
           </div>
           <div class="inline" style="margin-top:10px; gap:8px; flex-wrap:wrap">
@@ -187,17 +177,15 @@
   </div>
 
 <script>
-/* ========== GOOGLE SHEETS CONFIG ========== */
+/* ====== GOOGLE SHEETS CONFIG (điền đúng API_KEY của bạn) ====== */
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec';
-const API_KEY    = 'const API_KEY    = 'abc123';  // API key giống bên web
-'; // ⚠️ đặt giống hệt API_KEY trong Code.gs của bạn
+const API_KEY    = 'abc123'; // <-- sửa cho trùng với const API_KEY trong Apps Script
 
-/* ========== APP CONFIG/LOGIC ========== */
+/* ====== APP LOGIC ====== */
 const DIVS=[5,4,3,2,1],MAX_STARS=5,TIERS=["Kim Cương","Tinh Anh","Cao thủ","Đại cao thủ","Chiến tướng"];
 const DEFAULT_PRICES={"Kim Cương":3000,"Tinh Anh":5000,"Cao thủ":7000,"Đại cao thủ":10000,"Chiến tướng":15000};
 const CT_MIN=50;
 let prices={...DEFAULT_PRICES};
-
 const el=id=>document.getElementById(id);
 const option=list=>list.map(v=>`<option value="${v}">${v}</option>`).join("");
 const idxTier=t=>TIERS.indexOf(t);
@@ -259,7 +247,7 @@ function calc(){
 }
 function swap(){const a=getState("from"), b=getState("to"); setState("from",b); setState("to",a); calc();}
 
-// === Google Sheets: snapshot + save + stats ===
+/* === Google Sheets: snapshot + save + stats === */
 function snapshotOrder(){
   const fromTier=el("fromTier").value, toTier=el("toTier").value;
   let from={tier:fromTier}, to={tier:toTier};
@@ -285,7 +273,7 @@ async function saveOrder(){
     const payload={ apiKey:API_KEY, ...order };
     const body=new URLSearchParams({ payload: JSON.stringify(payload) });
     const res=await fetch(SHEETS_URL,{ method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body });
-    const data=await res.json().catch(()=>({ok:false,error:"Bad JSON"}));
+    const text=await res.text(); let data={}; try{ data=JSON.parse(text) }catch{ data={ok:false,error:text} }
     el("saveMsg").textContent = data.ok ? "✅ Đã lưu đơn." : ("❌ Lỗi: " + (data.error||""));
   }catch(err){ el("saveMsg").textContent="❌ Lỗi mạng: "+err; }
 }
@@ -305,12 +293,7 @@ async function fetchStats(){
   }catch(err){ el('statsBox').textContent='Lỗi: '+err; }
 }
 
-/* ========== INIT & EVENTS ========== */
-function loadPriceTable(){
-  const tb=el("priceTable");
-  tb.innerHTML=TIERS.map(t=>`<tr><td>${t}</td><td><input class="price-edit" type="number" min="0" step="500" value="${prices[t]}" data-tier="${t}"/></td></tr>`).join("");
-  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{const t=e.target.dataset.tier; prices[t]=Math.max(0,Math.round(Number(e.target.value||0))); calc();}));
-}
+/* ====== INIT & EVENTS ====== */
 loadSelectors(); loadPriceTable();
 setState("from",{ti:idxTier("Kim Cương"),di:3,st:0});
 setState("to",{ti:idxTier("Kim Cương"),di:1,st:0});
