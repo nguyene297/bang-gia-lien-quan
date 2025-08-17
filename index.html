@@ -2,142 +2,148 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <title>Tính Giá Liên Quân</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tính sao & Doanh thu Liên Quân</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #f7f7f7; }
-    h2 { margin-top: 20px; }
-    .section { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-    label { display: block; margin-top: 10px; }
-    input, select, button { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: #007bff; color: #fff; border: none; font-weight: bold; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    .result { margin-top: 10px; font-weight: bold; color: green; }
-    .note { font-size: 0.9em; color: #444; margin-top: 5px; }
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+    header { background:#4CAF50; color:white; text-align:center; padding:10px; }
+    main { padding:10px; }
+    .section { background:#fff; border-radius:8px; padding:15px; margin-bottom:15px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    label { display:block; margin-top:8px; }
+    input, select { width:100%; padding:8px; margin-top:4px; border:1px solid #ccc; border-radius:4px; }
+    button { margin-top:10px; padding:10px; width:100%; background:#4CAF50; border:none; border-radius:5px; color:white; font-size:16px; }
+    button:hover { background:#45a049; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; }
+    table, th, td { border:1px solid #ccc; }
+    th, td { padding:6px; text-align:center; }
+    .result { font-weight:bold; color:#d9534f; margin-top:10px; text-align:center; }
+    .note { font-size:13px; color:#555; margin-top:5px; }
+    @media (max-width:600px) {
+      table, th, td { font-size:12px; }
+      button { font-size:14px; }
+    }
   </style>
 </head>
 <body>
-  <h2>Thông tin chung</h2>
+<header>
+  <h1>Quản lý cày thuê Liên Quân</h1>
+</header>
+<main>
+  <!-- Thông tin chung -->
   <div class="section">
-    <label>Thượng đế (Khách hàng):</label>
-    <input type="text" id="khachHang">
-    <label>Nô lệ (Nhân viên):</label>
-    <input type="text" id="nhanVien">
+    <h2>Thông tin chung</h2>
+    <label>Thượng đế (Khách hàng): <input type="text" id="khach"></label>
+    <label>Nô lệ (Nhân viên): <input type="text" id="nhanvien"></label>
   </div>
 
-  <h2>Cày rank</h2>
+  <!-- Cày rank -->
   <div class="section">
-    <label>Bậc hiện tại:</label>
-    <select id="rankFrom"></select>
-    <label>Sao hiện tại:</label>
-    <input type="number" id="saoFrom" min="0" value="0">
-    <label>Bậc mục tiêu:</label>
-    <select id="rankTo"></select>
-    <label>Sao mục tiêu:</label>
-    <input type="number" id="saoTo" min="1" value="1">
-    <button onclick="tinhRank()">Tính giá cày rank</button>
-    <div class="result" id="ketQuaRank"></div>
+    <h2>Cày Rank</h2>
+    <label>Từ rank: 
+      <select id="fromRank"></select>
+    </label>
+    <label>Sao hiện tại: <input type="number" id="fromStar" min="0"></label>
+    <label>Đến rank: 
+      <select id="toRank"></select>
+    </label>
+    <label>Sao mục tiêu: <input type="number" id="toStar" min="1"></label>
+    <button onclick="calcRank()">Tính giá Cày Rank</button>
+    <div id="rankResult" class="result"></div>
+    <table id="rankTable" style="display:none;">
+      <thead><tr><th>Từ</th><th>Đến</th><th>Số sao</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <h2>Thuê slot</h2>
+  <!-- Thuê slot -->
   <div class="section">
-    <label>Số giờ thuê:</label>
-    <input type="number" id="soGio" min="1" value="1">
-    <button onclick="tinhSlot()">Tính giá thuê slot</button>
-    <div class="result" id="ketQuaSlot"></div>
+    <h2>Thuê Slot</h2>
+    <label>Số giờ thuê: <input type="number" id="slotHour" min="1"></label>
+    <button onclick="calcSlot()">Tính giá Thuê Slot</button>
+    <div id="slotResult" class="result"></div>
   </div>
 
-  <h2>Thống kê</h2>
+  <!-- Doanh thu -->
   <div class="section">
-    <button onclick="guiDon()">Lưu đơn</button>
-    <button onclick="thongKe()">Xem doanh thu tháng</button>
-    <div class="result" id="doanhThu"></div>
+    <h2>Doanh thu</h2>
+    <button onclick="getRevenue()">Thống kê doanh thu tháng</button>
+    <div id="revenueResult" class="result"></div>
   </div>
-
-  <div class="note">
-    * Chiến tướng: từ 70★ trở lên tính 20.000đ/★ (giá áp theo sao trước bước).
-  </div>
+</main>
 
 <script>
-const TIERS = ["Tinh Anh", "Kim Cương", "Cao Thủ", "Đại Cao Thủ", "Chiến tướng"];
-const prices = {"Tinh Anh": 2000, "Kim Cương": 5000, "Cao Thủ": 10000, "Đại Cao Thủ": 15000, "Chiến tướng": 15000};
-const CT_HIGH_THRESHOLD = 70, CT_HIGH_PRICE = 20000;
+  const TIERS = ["Tinh 4","Tinh 3","Tinh 2","Tinh 1",
+                 "Kim cương 5","Kim cương 4","Kim cương 3","Kim cương 2","Kim cương 1",
+                 "Tinh Anh 5","Tinh Anh 4","Tinh Anh 3","Tinh Anh 2","Tinh Anh 1",
+                 "Cao Thủ","Đại Cao Thủ","Chiến tướng"];
+  const STAR_LIMITS = {
+    "Tinh 4":5,"Tinh 3":5,"Tinh 2":5,"Tinh 1":5,
+    "Kim cương 5":5,"Kim cương 4":5,"Kim cương 3":5,"Kim cương 2":5,"Kim cương 1":5,
+    "Tinh Anh 5":5,"Tinh Anh 4":5,"Tinh Anh 3":5,"Tinh Anh 2":5,"Tinh Anh 1":5,
+    "Cao Thủ":9,"Đại Cao Thủ":49,"Chiến tướng":150
+  };
+  const PRICES = {
+    "Tinh":3000,"Kim cương":5000,"Tinh Anh":7000,
+    "Cao Thủ":10000,"Đại Cao Thủ":15000,"Chiến tướng":15000
+  };
+  const CT_HIGH_THRESHOLD = 70;
+  const CT_HIGH_PRICE = 20000;
+  const SLOT_PRICE = 30000;
 
-function fillRankOptions(){
-  let opts="";
-  TIERS.forEach((t,i)=>{opts += `<option value="${i}">${t}</option>`;});
-  document.getElementById("rankFrom").innerHTML=opts;
-  document.getElementById("rankTo").innerHTML=opts;
-}
-fillRankOptions();
-
-function priceForStep(prev){
-  let tier = TIERS[prev.ti];
-  if(tier==="Chiến tướng"){
-    let abs = Number(prev.abs||0);
-    if(abs>=CT_HIGH_THRESHOLD) return CT_HIGH_PRICE;
-    return prices["Chiến tướng"];
-  }
-  return prices[tier];
-}
-
-// So sánh trạng thái
-function lt(a,b){ return a.ti<b.ti || (a.ti===b.ti && a.abs<b.abs); }
-function stepOnce(st,carry){
-  st.abs++; st.star++;
-  let max=5;
-  if(TIERS[st.ti]==="Cao Thủ") max=9;
-  if(TIERS[st.ti]==="Đại Cao Thủ") max=49;
-  if(TIERS[st.ti]==="Chiến tướng") max=150;
-  if(st.star>max){ st.ti++; st.star=1; st.abs++; }
-}
-
-function* starPath(from,to){
-  let cur=JSON.parse(JSON.stringify(from));
-  let segFrom=JSON.parse(JSON.stringify(cur)), segTier=cur.ti, segPrice=priceForStep(cur), segStars=0;
-  while(lt(cur,to)){
-    let prev=JSON.parse(JSON.stringify(cur));
-    let curPrice=priceForStep(prev);
-    stepOnce(cur);
-    if(curPrice!==segPrice || prev.ti!==segTier){
-      if(segStars>0) yield {from:{...segFrom},to:{...prev},stars:segStars,pricePerStar:segPrice};
-      segFrom={...prev}; segTier=prev.ti; segPrice=curPrice; segStars=0;
-    }
-    segStars++;
-  }
-  if(segStars>0) yield {from:{...segFrom},to:{...to},stars:segStars,pricePerStar:segPrice};
-}
-
-function tinhRank(){
-  let from={ti:+rankFrom.value,star:+saoFrom.value,abs:+saoFrom.value}, to={ti:+rankTo.value,star:+saoTo.value,abs:+saoTo.value};
-  let total=0,detail="";
-  for(let seg of starPath(from,to)){
-    total+=seg.stars*seg.pricePerStar;
-    detail+=`Từ ${TIERS[seg.from.ti]} ${seg.from.star}★ đến ${TIERS[seg.to.ti]} ${seg.to.star}★: ${seg.stars}★ × ${seg.pricePerStar}đ<br>`;
-  }
-  document.getElementById("ketQuaRank").innerHTML=`${detail}<b>Tổng: ${total.toLocaleString()}đ</b>`;
-  return total;
-}
-
-function tinhSlot(){
-  let h=+soGio.value; let total=h*30000;
-  document.getElementById("ketQuaSlot").innerText=`${h} giờ = ${total.toLocaleString()}đ`;
-  return total;
-}
-
-function guiDon(){
-  let k=document.getElementById("khachHang").value, n=document.getElementById("nhanVien").value;
-  let tienRank=tinhRank(), tienSlot=tinhSlot();
-  let data={khach:k,nhanvien:n,rank:tienRank,slot:tienSlot};
-  fetch("YOUR_SCRIPT_URL", {method:"POST",body:JSON.stringify(data)});
-  alert("Đơn đã lưu!");
-}
-
-function thongKe(){
-  fetch("https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec?action=thongke").then(r=>r.json()).then(d=>{
-    document.getElementById("doanhThu").innerText="Tổng doanh thu tháng: "+d.total.toLocaleString()+"đ";
+  // populate dropdown
+  const fromSel = document.getElementById("fromRank");
+  const toSel = document.getElementById("toRank");
+  TIERS.forEach(t => {
+    let o1=document.createElement("option"); o1.value=t; o1.text=t; fromSel.add(o1);
+    let o2=document.createElement("option"); o2.value=t; o2.text=t; toSel.add(o2);
   });
-}
+
+  function priceForStep(tier, starBefore){
+    if(tier==="Chiến tướng"){
+      return (starBefore>=CT_HIGH_THRESHOLD) ? CT_HIGH_PRICE : PRICES["Chiến tướng"];
+    }
+    if(tier.startsWith("Tinh ")) return PRICES["Tinh"];
+    if(tier.startsWith("Kim cương")) return PRICES["Kim cương"];
+    if(tier.startsWith("Tinh Anh")) return PRICES["Tinh Anh"];
+    return PRICES[tier];
+  }
+
+  function calcRank(){
+    const fromRank=fromSel.value, toRank=toSel.value;
+    let fromStar=parseInt(document.getElementById("fromStar").value)||0;
+    let toStar=parseInt(document.getElementById("toStar").value)||1;
+    let fromIndex=TIERS.indexOf(fromRank), toIndex=TIERS.indexOf(toRank);
+    if(fromIndex>toIndex || (fromIndex===toIndex && fromStar>=toStar)){
+      alert("Mốc mục tiêu phải cao hơn mốc ban đầu"); return;
+    }
+    let total=0, tbody=document.querySelector("#rankTable tbody"); tbody.innerHTML="";
+    let curTier=fromRank, curIndex=fromIndex, curStar=fromStar;
+    while(curIndex<toIndex || (curIndex===toIndex && curStar<toStar)){
+      let starBefore=curStar;
+      let price=priceForStep(curTier, starBefore);
+      curStar++;
+      total+=price;
+      if(curStar>STAR_LIMITS[curTier]){
+        curIndex++; curTier=TIERS[curIndex]; curStar=1; // khi lên rank mới thì sao bắt đầu từ 1
+      }
+    }
+    document.getElementById("rankResult").innerText="Tổng tiền: "+total.toLocaleString()+" đ";
+  }
+
+  function calcSlot(){
+    const h=parseInt(document.getElementById("slotHour").value)||0;
+    if(h<=0){ alert("Nhập số giờ hợp lệ"); return; }
+    const total=h*SLOT_PRICE;
+    document.getElementById("slotResult").innerText="Tổng tiền: "+total.toLocaleString()+" đ";
+  }
+
+  async function getRevenue(){
+    const url="https://script.google.com/macros/s/AKfycbzZO7OrMVvXYkCeQPY0FHut-5CeEVFHGprAxzQHX7p66yaZF0-NI9f4rXGrHd5wGKX6/exec?action=getRevenue";
+    try{
+      const res=await fetch(url); const data=await res.json();
+      document.getElementById("revenueResult").innerText="Doanh thu tháng: "+data.revenue.toLocaleString()+" đ";
+    }catch(e){ alert("Không lấy được doanh thu"); }
+  }
 </script>
 </body>
 </html>
